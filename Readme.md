@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Marianna Minich](https://up.htmlacademy.ru/javascript/14/user/788161).
-* Наставник: `Неизвестно`.
+* Наставник: [Данил Чекалин](https://htmlacademy.ru/profile/id335807).
 
 ---
 
