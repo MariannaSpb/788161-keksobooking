@@ -54,7 +54,12 @@ var minGuests = 1;
 var maxGuests = 10;
 var pinWidth = 50;
 var pinHeight = 70;
-
+var houseType = {
+  'palace': 'Дворец',
+  'flat': 'Квартира',
+  'house': 'Дом',
+  'bungalo': 'Бунгало',
+};
 
 
 // функция генерации случайного элемента массива
@@ -92,6 +97,7 @@ function createCoords () {
 };
 
 //создаем массив объяв
+
 function createOffer (id) {
   var coords = createCoords();
 
@@ -120,13 +126,7 @@ function createOffer (id) {
 };
 
 function getHouseType(type) {
-  var hauseType = {
-    'palace': 'Дворец',
-    'flat': 'Квартира',
-    'house': 'Дом',
-    'bungalo': 'Бунгало',
-  }
-  return hauseType[type];
+  return houseType[type];
 };
 
 
@@ -177,11 +177,27 @@ for (var i = 0; i < offers.length; i++) {
 
 mapPins.appendChild(pinFragment);
 
+
+//Функция заполнения списка фотографий
+var renderPhotos = function(photos) {
+var fragment = document.createElement("div");
+for (var i = 0; i < photos.length; i++) {
+  var img = document.createElement("img");
+  img.src = photos[i];
+  fragment.appendChild(img);
+  img.setAttribute('height', 40);
+  img.setAttribute('widtht', 45);
+}
+ return fragment;
+}
+
+
 // создайте DOM-элемент объявления и заполните его данными из объекта
 var mapCardTemplate = document.querySelector('template').content.querySelector('.map__card');
 
 function renderMapCard(mapCard) {
   var mapCardElement = mapCardTemplate.cloneNode(true);
+  console.log(mapCard);
   mapCardElement.querySelector('.popup__title').textContent = mapCard.offer.title;
   mapCardElement.querySelector('.popup__text--address').textContent = mapCard.offer.address;
   mapCardElement.querySelector('.popup__text--price').textContent = mapCard.offer.price + '₽/ночь';
@@ -193,8 +209,9 @@ function renderMapCard(mapCard) {
     mapCardElement.querySelector('.popup__features').innerHTML += '<li class="popup__feature popup__feature--' + mapCardElement.offer.feauters[j] + '"></li>';
   }
   mapCardElement.querySelector('.popup__description').textContent = mapCard.offer.description;
- mapCardElement.querySelector('.popup__photos').src = shuffleArray(photos).offer.photos; // боже. что я несу
-  mapCardElement.querySelector('.popup__avatar').src = mapCard.author.avatar;
+  mapCardElement.querySelector('.popup__photos').appendChild(renderPhotos(mapCard.offer.photos));
+
+ mapCardElement.querySelector('.popup__avatar').src = mapCard.author.avatar;
 
   return mapCardElement;
 
@@ -204,8 +221,12 @@ function renderMapCard(mapCard) {
 var mapFiltersContainer = document.querySelector('.map__filters-container');
 
 var fragment = document.createDocumentFragment();
-for (var i = 0; i < NUMBER_ROOMS; i++) {
-  fragment.appendChild(renderMapCard(pinNode[i]));
-}
 
-+map.insertBefore(fragment, Map.querySelector('.map__filters-container'));
+for (var i = 0; i < NUMBER_ROOMS; i++) {
+  fragment.appendChild(renderMapCard(offers[0]));
+};
+map.insertBefore(fragment, mapFiltersContainer);
+
+
+//mapCardElement.querySelector('.popup__photos').src = shuffleArray(photos).offer.photos; // боже. что я несу
+
