@@ -24,6 +24,12 @@ var checkinTimes = [
   '14:00'
 ];
 
+var checkoutTimes = [
+  '12:00',
+  '13:00',
+  '14:00'
+];
+
 var features = [
   'wifi',
   'dishwasher',
@@ -112,8 +118,8 @@ function createOffer (id) {
       type: getRandomElement(types),
       rooms: getRandomInteger(minRooms, maxRooms),
       guests: getRandomInteger(minGuests, maxGuests),
-      checkIn: getRandomElement(checkinTimes),
-      checkout: getRandomElement(checkinTimes),
+      checkin: getRandomElement(checkinTimes),
+      checkout: getRandomElement(checkoutTimes),
       feauters: getRandomLengthArray(features, 1),
       description: '',
       photos: shuffleArray(photos),
