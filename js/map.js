@@ -154,15 +154,19 @@ function createPinNode(pinObject) {
   pinNode.style.top = pinObject.location.y - pinHeight + 'px';
   pinNode.querySelector('img').src = pinObject.author.avatar;
   pinNode.querySelector('img').alt = pinObject.offer.title;
-
+  pinNode.addEventListener('click', function (evt) { // вешаю обработчик
+    evt.preventDefault();
+  // // по идее тут должна быть функция создания уникальной карточки (по идентификатору)
+  });
   return pinNode;
 }
+
 
 // MAIN FLOW
 
 // У блока .map уберите класс .map--faded.
 var map = document.querySelector('.map');
-map.classList.remove('map--faded');
+// map.classList.remove('map--faded');
 
 // находим блок  с метками
 var mapPins = map.querySelector('.map__pins');
@@ -178,9 +182,9 @@ for (var i = 0; i < offers.length; i++) {
   pinFragment.appendChild(pinNode);
 }
 
-mapPins.appendChild(pinFragment);
+// mapPins.appendChild(pinFragment);
 
-// создайте DOM-элемент объявления и заполните его данными из объекта
+// создайте DOM-элемент объявления и заполните его данными из объекта. отрисовка 1 объявления
 var mapCardTemplate = document.querySelector('template').content.querySelector('.map__card');
 function renderMapCard(mapCard) {
   var mapCardElement = mapCardTemplate.cloneNode(true);
@@ -202,15 +206,84 @@ function renderMapCard(mapCard) {
   mapCardElement.querySelector('.popup__avatar').src = mapCard.author.avatar;
 
   return mapCardElement;
-
 }
 
 // вставьте полученный DOM-элемент в блок .map перед блоком.map__filters-container:
 var mapFiltersContainer = document.querySelector('.map__filters-container');
-
 var fragment = document.createDocumentFragment();
 
 for (var k = 0; k < NUMBER_ROOMS; k++) {
   fragment.appendChild(renderMapCard(offers[0]));
 }
 map.insertBefore(fragment, mapFiltersContainer);
+
+
+// -------------------------------------------module4-tastk1-------------------------------------------------------
+// находим нужные элементы
+// var map = document.querySelector('.map');
+// var mapPins = map.querySelector('.map__pins');
+var adForm = document.querySelector('.ad-form');
+var fieldsets = adForm.querySelectorAll('fieldset');
+var mainPin = map.querySelector('.map__pin--main');
+var inputAddress = adForm.querySelector('#address');
+// var buttonClose = document.querySelector('.popup__close');
+var ENTER_KEYCODE = 13;
+var MAIN_PIN_LEFT = 570; // Размеры и положение неактивной метки
+var MAIN_PIN_TOP = 375;
+var MAIN_PIN_WIDTH = 65;
+var MAIN_PIN_HEIGHT = 65 + 22;
+
+// координаты метки- по заданию - по центру
+var mainPinLeftCenter = MAIN_PIN_LEFT - MAIN_PIN_WIDTH / 2;
+var mainPinToptCenter = MAIN_PIN_TOP - MAIN_PIN_HEIGHT / 2;
+
+mainPin.style.left = mainPinLeftCenter + 'px';
+mainPin.style.top = MAIN_PIN_TOP - MAIN_PIN_HEIGHT + 'px';
+
+
+// функция разблокирования карты удалением кассов с формы и карты  и отрисовкой пинов
+var mainPinClick = function () {
+  map.classList.remove('map--faded'); // снять блок с карты
+  adForm.classList.remove('ad-form--disabled'); // снять блок с полей формы
+  fieldsets.forEach(function (item) {
+    item.disabled = false;
+  });
+  mapPins.appendChild(pinFragment); // добавить массива меток и объяв
+  mainPin.style.left = mainPinLeftCenter + 'px'; // координаты главной метки по указателю
+  mainPin.style.top = MAIN_PIN_TOP - MAIN_PIN_HEIGHT + 'px';
+  inputAddress.value = mainPinLeftCenter + ', ' + mainPinToptCenter; // передача адреса по клику в соответствующее поле
+};
+
+mainPin.addEventListener('mouseup', mainPinClick); // обработчик снятия блокировки
+
+var buttonClose = document.querySelector('.popup__close');
+var mapCard = document.querySelector('.map__card popup');
+
+
+buttonClose.addEventListener('click', function () {
+  mapCard.classList.add('hidden');
+});
+
+buttonClose.addEventListener('keydown', function (evt) {
+  evt.preventDefault();
+  if (evt.keyCode === ENTER_KEYCODE) {
+    mapCard.classList.add('hidden');
+  }
+});
+
+
+// найти блок  пинами через querySelector
+// написать функцию открытия пин+бъявление  var onPinClick = function ()
+// добавить обработчик на открытие пина  и передать функцию открытия пин+объяление clickPins.addEventListener('click', onPinClick());
+
+
+
+
+
+// клик по пину
+// var clickHandler = function (evt) {
+// evt.preventDefault();
+// должна быть функция создания объя
+// evt.target.classList.remove('hidden');
+// };
+
