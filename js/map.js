@@ -161,6 +161,7 @@ function createPinNode(pinObject) {
   return pinNode;
 }
 
+// тут будет функция создания уникальной карточки при клике на пин
 
 // MAIN FLOW
 
@@ -188,6 +189,7 @@ for (var i = 0; i < offers.length; i++) {
 var mapCardTemplate = document.querySelector('template').content.querySelector('.map__card');
 function renderMapCard(mapCard) {
   var mapCardElement = mapCardTemplate.cloneNode(true);
+  mapCardElement.classList.add('hidden');
   mapCardElement.querySelector('.popup__title').textContent = mapCard.offer.title;
   mapCardElement.querySelector('.popup__text--address').textContent = mapCard.offer.address;
   mapCardElement.querySelector('.popup__text--price').textContent = mapCard.offer.price + '₽/ночь';
@@ -256,34 +258,11 @@ var mainPinClick = function () {
 
 mainPin.addEventListener('mouseup', mainPinClick); // обработчик снятия блокировки
 
-var buttonClose = document.querySelector('.popup__close');
-var mapCard = document.querySelector('.map__card popup');
 
+// найти блок  с пинами
+// написать функцию отрисовки пина по уникальному индексу
+// добавить обработчик клика по пину  и передать функцию открытия (пин+  объяление + координаты)
+// функция закрытия карточки + обработчки по клику на крестик
+// удалить событие после закрытия окна
 
-buttonClose.addEventListener('click', function () {
-  mapCard.classList.add('hidden');
-});
-
-buttonClose.addEventListener('keydown', function (evt) {
-  evt.preventDefault();
-  if (evt.keyCode === ENTER_KEYCODE) {
-    mapCard.classList.add('hidden');
-  }
-});
-
-
-// найти блок  пинами через querySelector
-// написать функцию открытия пин+бъявление  var onPinClick = function ()
-// добавить обработчик на открытие пина  и передать функцию открытия пин+объяление clickPins.addEventListener('click', onPinClick());
-
-
-
-
-
-// клик по пину
-// var clickHandler = function (evt) {
-// evt.preventDefault();
-// должна быть функция создания объя
-// evt.target.classList.remove('hidden');
-// };
 
