@@ -154,7 +154,7 @@ function createPinNode(pinObject) {
   pinNode.querySelector('img').alt = pinObject.offer.title;
   pinNode.addEventListener('click', function (evt) {
     evt.preventDefault();
-    // addCard(pinObject);
+    addCard(pinObject);
   });
   return pinNode;
 
@@ -209,8 +209,8 @@ function renderMapCard(mapCard) {
   mapCardElement.querySelector('.popup__avatar').src = mapCard.author.avatar;
 
   var closeButton = mapCardElement.querySelector('.popup__close');
-  closeButton.addEventListener('click', function () {
-    // evt.preventDefault();
+  closeButton.addEventListener('click', function (evt) {
+    evt.preventDefault();
     mapCardElement.remove();
   });
   return mapCardElement;
@@ -222,12 +222,12 @@ var fragment = document.createDocumentFragment();
 for (var k = 0; k < NUMBER_ROOMS; k++) {
   fragment.appendChild(renderMapCard(offers[0]));
 }
-// var addCard = function (pinObject) {
-//   if (map.querySelector('.popup')) {
-//     map.querySelector('.popup').remove();
-//   }
-map.insertBefore(fragment, mapFiltersContainer);
-// };
+var addCard = function (pinObject) {
+  if (map.querySelector('.popup')) {
+    map.querySelector('.popup').remove();
+  }
+  map.insertBefore(fragment, mapFiltersContainer);
+};
 // -------------------------------------------module4-tastk1-------------------------------------------------------
 // находим нужные элементы
 // var map = document.querySelector('.map');
