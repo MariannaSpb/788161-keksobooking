@@ -210,7 +210,7 @@ function renderMapCard(mapCard) {
 
   var closeButton = mapCardElement.querySelector('.popup__close');
   closeButton.addEventListener('click', function () {
-    //evt.preventDefault();
+    // evt.preventDefault();
     mapCardElement.remove();
   });
   return mapCardElement;
@@ -226,8 +226,8 @@ for (var k = 0; k < NUMBER_ROOMS; k++) {
 //   if (map.querySelector('.popup')) {
 //     map.querySelector('.popup').remove();
 //   }
-  map.insertBefore(fragment, mapFiltersContainer);
-//};
+map.insertBefore(fragment, mapFiltersContainer);
+// };
 // -------------------------------------------module4-tastk1-------------------------------------------------------
 // находим нужные элементы
 // var map = document.querySelector('.map');
