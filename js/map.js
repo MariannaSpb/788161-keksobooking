@@ -63,8 +63,22 @@ var minRooms = 1;
 var maxRooms = 5;
 var minGuests = 1;
 var maxGuests = 10;
-var pinWidth = 50;
-var pinHeight = 70;
+var PIN_WIDTH = 50;
+var PIN_HEIGHT = 70;
+// var MAIN_PIN_LEFT = 570; // Размеры и положение неактивной метки
+// var MAIN_PIN_TOP = 375;
+// var MAIN_PIN_WIDTH = 65;
+// var MAIN_PIN_HEIGHT = 80;
+// var MAIN_PIN_POINTER = 22;
+var ESC_KEYCODE = 27;
+var map = document.querySelector('.map');
+var mapPins = map.querySelector('.map__pins');
+var pinTemplate = document.querySelector('template').content.querySelector('.map__pin'); // нашли шаблон метки
+var mapCardTemplate = document.querySelector('template').content.querySelector('.map__card');
+var adForm = document.querySelector('.ad-form');
+var fieldsets = adForm.querySelectorAll('fieldset');
+var mainPin = map.querySelector('.map__pin--main');
+var inputAddress = adForm.querySelector('#address');
 
 // функция генерации случайного элемента массива
 function getRandomElement(array) {
@@ -144,32 +158,36 @@ function createOffers() {
   return newOffers;
 }
 
+offers = createOffers();
+
+function onEsc(evt, popup) {
+  if (evt.keyCode === ESC_KEYCODE) {
+    popup.remove();
+  }
+}
+
+// var mapFiltersContainer = document.querySelector('.map__filters-container');
+var popupParent = document.querySelector('.map__filters-container');
+
 // создаем метку на основе шаблона
+
 function createPinNode(pinObject) {
   var pinNode = pinTemplate.cloneNode(true);
-
-  pinNode.style.left = (pinObject.location.x - pinWidth / 2) + 'px';
-  pinNode.style.top = pinObject.location.y - pinHeight + 'px';
+  pinNode.style.left = pinObject.location.x - PIN_WIDTH / 2 + 'px';
+  pinNode.style.top = pinObject.location.y - PIN_HEIGHT + 'px';
   pinNode.querySelector('img').src = pinObject.author.avatar;
   pinNode.querySelector('img').alt = pinObject.offer.title;
-  pinNode.addEventListener('click', function (evt) {
-    evt.preventDefault();
-    addCard(pinObject);
+  pinNode.addEventListener('click', function () {
+    var mapCard = map.querySelector('.map__card');
+    if (mapCard) {
+      mapCard.remove();
+    }
+    popupParent.appendChild(renderMapCard(pinObject));
   });
   return pinNode;
-
 }
 
 // MAIN FLOW
-
-// У блока .map уберите класс .map--faded.
-var map = document.querySelector('.map');
-// map.classList.remove('map--faded');
-
-// находим блок  с метками
-var mapPins = map.querySelector('.map__pins');
-var pinTemplate = document.querySelector('template').content.querySelector('.map__pin'); // нашли шаблон метки
-
 // генерируем офферы
 offers = createOffers();
 
@@ -179,17 +197,15 @@ for (var i = 0; i < offers.length; i++) {
   var pinNode = createPinNode(offers[i]);
   pinFragment.appendChild(pinNode);
 }
-// mapPins.appendChild(pinFragment);
 
 
-// функция создания DOM-элемента объявления и заполнения его данными. 1) отрисовка 1 объявления
-var mapCardTemplate = document.querySelector('template').content.querySelector('.map__card');
+// функция создания DOM-элемента объявления и заполнения его данными.  отрисовка 1 объявления
 
 function renderMapCard(mapCard) {
   var mapCardElement = mapCardTemplate.cloneNode(true);
-  if (mapCardElement) {
-    mapCardElement.remove(); // попытка скрыть отрисовывающееся объявление на старте
-  }
+  // if (mapCardElement) {
+  //   mapCardElement.remove(); // попытка скрыть отрисовывающееся объявление на старте
+  // }
   // mapCardElement.classList.add('hidden');
   mapCardElement.querySelector('.popup__title').textContent = mapCard.offer.title;
   mapCardElement.querySelector('.popup__text--address').textContent = mapCard.offer.address;
@@ -208,70 +224,28 @@ function renderMapCard(mapCard) {
   }
   mapCardElement.querySelector('.popup__avatar').src = mapCard.author.avatar;
 
-  var closeButton = mapCardElement.querySelector('.popup__close');
-  closeButton.addEventListener('click', function (evt) {
-    evt.preventDefault();
+  var closeCard = mapCardElement.querySelector('.popup__close');
+  closeCard.addEventListener('click', function () {
     mapCardElement.remove();
+    document.removeEventListener('click', onEsc);
   });
   return mapCardElement;
 }
 
-// вставьте полученный DOM-элемент в блок .map перед блоком.map__filters-container:
-var mapFiltersContainer = document.querySelector('.map__filters-container');
-var fragment = document.createDocumentFragment();
-for (var k = 0; k < NUMBER_ROOMS; k++) {
-  fragment.appendChild(renderMapCard(offers[0]));
-}
-var addCard = function (pinObject) {
-  if (map.querySelector('.popup')) {
-    map.querySelector('.popup').remove();
-  }
-  map.insertBefore(fragment, mapFiltersContainer);
+// -------module4---------------------------------
+
+var getCoordinates = function () {
+  inputAddress.value = (mainPin.offsetTop + PIN_HEIGHT) + ', ' + (mainPin.offsetLeft + PIN_WIDTH / 2);
 };
-// -------------------------------------------module4-tastk1-------------------------------------------------------
-// находим нужные элементы
-// var map = document.querySelector('.map');
-// var mapPins = map.querySelector('.map__pins');
-var adForm = document.querySelector('.ad-form');
-var fieldsets = adForm.querySelectorAll('fieldset');
-var mainPin = map.querySelector('.map__pin--main');
-var inputAddress = adForm.querySelector('#address');
-// var buttonClose = document.querySelector('.popup__close');
-// var ENTER_KEYCODE = 13;
-var MAIN_PIN_LEFT = 570; // Размеры и положение неактивной метки
-var MAIN_PIN_TOP = 375;
-var MAIN_PIN_WIDTH = 65;
-var MAIN_PIN_HEIGHT = 80;
 
-// координаты метки- по заданию - по центру
-var mainPinLeftCenter = Math.round(MAIN_PIN_LEFT - MAIN_PIN_WIDTH / 2); // округлила координаты
-var mainPinToptCenter = Math.round(MAIN_PIN_TOP - MAIN_PIN_HEIGHT / 2);
-
-
-mainPin.style.left = mainPinLeftCenter + 'px';
-mainPin.style.top = MAIN_PIN_TOP - MAIN_PIN_HEIGHT + 'px';
-
-// функция разблокирования карты удалением кассов с формы и карты  и отрисовкой пинов
 var mainPinClick = function () {
   map.classList.remove('map--faded'); // снять блок с карты
   adForm.classList.remove('ad-form--disabled'); // снять блок с полей формы
+  getCoordinates();
+  mapPins.appendChild(pinFragment);
   fieldsets.forEach(function (item) {
     item.disabled = false;
   });
-  mapPins.appendChild(pinFragment); // добавить массива меток и объяв
-  mainPin.style.left = mainPinLeftCenter + 'px'; // координаты главной метки по указателю
-  mainPin.style.top = MAIN_PIN_TOP - MAIN_PIN_HEIGHT + 'px';
-  inputAddress.value = mainPinLeftCenter + ', ' + mainPinToptCenter; // передача адреса по клику в соответствующее поле
 };
 
-
-mainPin.addEventListener('mouseup', mainPinClick); // обработчик снятия блокировки
-
-
-// найти блок  с пинами
-// написать функцию отрисовки пина по уникальному индексу
-// добавить обработчик клика по пину  и передать функцию открытия (пин+  объяление + координаты)
-// функция закрытия карточки + обработчки по клику на крестик
-// удалить событие после закрытия окна
-
-
+mainPin.addEventListener('mouseup', mainPinClick);
