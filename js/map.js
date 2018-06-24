@@ -65,11 +65,6 @@ var minGuests = 1;
 var maxGuests = 10;
 var PIN_WIDTH = 50;
 var PIN_HEIGHT = 70;
-// var MAIN_PIN_LEFT = 570; // Размеры и положение неактивной метки
-// var MAIN_PIN_TOP = 375;
-// var MAIN_PIN_WIDTH = 65;
-// var MAIN_PIN_HEIGHT = 80;
-// var MAIN_PIN_POINTER = 22;
 var ESC_KEYCODE = 27;
 var map = document.querySelector('.map');
 var mapPins = map.querySelector('.map__pins');
@@ -166,7 +161,6 @@ function onEsc(evt, popup) {
   }
 }
 
-// var mapFiltersContainer = document.querySelector('.map__filters-container');
 var popupParent = document.querySelector('.map__filters-container');
 
 // создаем метку на основе шаблона
@@ -203,10 +197,6 @@ for (var i = 0; i < offers.length; i++) {
 
 function renderMapCard(mapCard) {
   var mapCardElement = mapCardTemplate.cloneNode(true);
-  // if (mapCardElement) {
-  //   mapCardElement.remove(); // попытка скрыть отрисовывающееся объявление на старте
-  // }
-  // mapCardElement.classList.add('hidden');
   mapCardElement.querySelector('.popup__title').textContent = mapCard.offer.title;
   mapCardElement.querySelector('.popup__text--address').textContent = mapCard.offer.address;
   mapCardElement.querySelector('.popup__text--price').textContent = mapCard.offer.price + '₽/ночь';
@@ -232,13 +222,13 @@ function renderMapCard(mapCard) {
   return mapCardElement;
 }
 
-// -------module4---------------------------------
+// ----------------------module4-task1--------------------------------
 
-var getCoordinates = function () {
+function getCoordinates() {
   inputAddress.value = (mainPin.offsetTop + PIN_HEIGHT) + ', ' + (mainPin.offsetLeft + PIN_WIDTH / 2);
-};
+}
 
-var mainPinClick = function () {
+function mainPinClick() {
   map.classList.remove('map--faded'); // снять блок с карты
   adForm.classList.remove('ad-form--disabled'); // снять блок с полей формы
   getCoordinates();
@@ -246,6 +236,6 @@ var mainPinClick = function () {
   fieldsets.forEach(function (item) {
     item.disabled = false;
   });
-};
+}
 
 mainPin.addEventListener('mouseup', mainPinClick);
