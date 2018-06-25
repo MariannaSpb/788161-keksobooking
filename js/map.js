@@ -66,14 +66,30 @@ var maxGuests = 10;
 var PIN_WIDTH = 50;
 var PIN_HEIGHT = 70;
 var ESC_KEYCODE = 27;
+var ENTER_KEYCODE = 13;
 var map = document.querySelector('.map');
 var mapPins = map.querySelector('.map__pins');
 var pinTemplate = document.querySelector('template').content.querySelector('.map__pin'); // нашли шаблон метки
 var mapCardTemplate = document.querySelector('template').content.querySelector('.map__card');
+var popupParent = document.querySelector('.map__filters-container');
 var adForm = document.querySelector('.ad-form');
 var fieldsets = adForm.querySelectorAll('fieldset');
 var mainPin = map.querySelector('.map__pin--main');
 var inputAddress = adForm.querySelector('#address');
+
+var mapCenterX = map.offsetWidth / 2; // определила центр
+var mapCenterY = map.offsetHeight / 2;
+
+mainPin.style.left = mapCenterX - (mainPin.offsetWidth / 2) + 'px'; // сместила главный пин
+mainPin.style.top = mapCenterY - (mainPin.offsetHeight / 2) + 'px';
+
+
+mainPin.addEventListener('mouseup', mainPinClick); // активация страницы
+
+// определение координат главного пина
+function getCoordinates() {
+  inputAddress.value = parseInt(mainPin.style.left, 10) + ', ' + parseInt(mainPin.style.top, 10);
+}
 
 // функция генерации случайного элемента массива
 function getRandomElement(array) {
@@ -81,6 +97,7 @@ function getRandomElement(array) {
 
   return array[randomElement];
 }
+
 
 // функция генерации данных из заданного диапазона
 function getRandomInteger(min, max) {
@@ -127,7 +144,7 @@ function createOffer(id) {
       guests: getRandomInteger(minGuests, maxGuests),
       checkin: getRandomElement(checkinTimes),
       checkout: getRandomElement(checkoutTimes),
-      feauters: getRandomLengthArray(features, 1),
+      features: getRandomLengthArray(features, 1),
       description: '',
       photos: shuffleArray(photos),
     },
@@ -153,15 +170,6 @@ function createOffers() {
   return newOffers;
 }
 
-offers = createOffers();
-
-function onEsc(evt, popup) {
-  if (evt.keyCode === ESC_KEYCODE) {
-    popup.remove();
-  }
-}
-
-var popupParent = document.querySelector('.map__filters-container');
 
 // создаем метку на основе шаблона
 
@@ -182,16 +190,6 @@ function createPinNode(pinObject) {
 }
 
 // MAIN FLOW
-// генерируем офферы
-offers = createOffers();
-
-// отрисуйум сгенерированные DOM-элементы в блок .map__pins. Используйте DocumentFragment.
-var pinFragment = document.createDocumentFragment();
-for (var i = 0; i < offers.length; i++) {
-  var pinNode = createPinNode(offers[i]);
-  pinFragment.appendChild(pinNode);
-}
-
 
 // функция создания DOM-элемента объявления и заполнения его данными.  отрисовка 1 объявления
 
@@ -204,8 +202,8 @@ function renderMapCard(mapCard) {
   mapCardElement.querySelector('.popup__text--capacity').textContent = mapCard.offer.rooms + ' комнаты для ' + mapCard.offer.guests + ' гостей';
   mapCardElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + mapCard.offer.checkin + ', выезд до ' + mapCard.offer.checkout;
   mapCardElement.querySelector('.popup__features').innerHTML = '';
-  for (var j = 0; j < mapCard.offer.length; j++) {
-    mapCardElement.querySelector('.popup__features').innerHTML += '<li class="popup__feature popup__feature--' + mapCardElement.offer.feauters[j] + '"></li>';
+  for (var j = 0; j < mapCard.offer.features.length; j++) {
+    mapCardElement.querySelector('.popup__features').innerHTML += '<li class="popup__feature popup__feature--' + mapCard.offer.features[j] + '"></li>';
   }
   mapCardElement.querySelector('.popup__description').textContent = mapCard.offer.description;
   mapCardElement.querySelector('.popup__photos').textContent = '';
@@ -222,13 +220,18 @@ function renderMapCard(mapCard) {
   return mapCardElement;
 }
 
-// ----------------------module4-task1--------------------------------
-
 function getCoordinates() {
-  inputAddress.value = (mainPin.offsetTop + PIN_HEIGHT) + ', ' + (mainPin.offsetLeft + PIN_WIDTH / 2);
+  inputAddress.value = parseInt(mainPin.style.left, 10) + ', ' + parseInt(mainPin.style.top, 10);
 }
 
+// активация странички
 function mainPinClick() {
+  offers = createOffers();
+  var pinFragment = document.createDocumentFragment(); // отрисуйум сгенерированные DOM-элементы в блок .map__pins. Используйте DocumentFragment.
+  for (var i = 0; i < offers.length; i++) {
+    var pinNode = createPinNode(offers[i]);
+    pinFragment.appendChild(pinNode);
+  }
   map.classList.remove('map--faded'); // снять блок с карты
   adForm.classList.remove('ad-form--disabled'); // снять блок с полей формы
   getCoordinates();
@@ -236,6 +239,15 @@ function mainPinClick() {
   fieldsets.forEach(function (item) {
     item.disabled = false;
   });
+  mainPin.removeEventListener('mouseup', mainPinClick);
 }
 
-mainPin.addEventListener('mouseup', mainPinClick);
+// открытие объявления клавишей Enter
+var activeCard = map.querySelector('.map__pin--main');
+activeCard.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === ENTER_KEYCODE) {
+    mainPinClick();
+  }
+});
+
+
