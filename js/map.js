@@ -65,7 +65,6 @@ var minGuests = 1;
 var maxGuests = 10;
 var PIN_WIDTH = 50;
 var PIN_HEIGHT = 70;
-var ESC_KEYCODE = 27;
 var ENTER_KEYCODE = 13;
 var map = document.querySelector('.map');
 var mapPins = map.querySelector('.map__pins');
@@ -215,13 +214,8 @@ function renderMapCard(mapCard) {
   var closeCard = mapCardElement.querySelector('.popup__close');
   closeCard.addEventListener('click', function () {
     mapCardElement.remove();
-    document.removeEventListener('click', onEsc);
   });
   return mapCardElement;
-}
-
-function getCoordinates() {
-  inputAddress.value = parseInt(mainPin.style.left, 10) + ', ' + parseInt(mainPin.style.top, 10);
 }
 
 // активация странички
