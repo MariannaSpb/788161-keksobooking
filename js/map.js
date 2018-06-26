@@ -44,10 +44,15 @@ var photos = [
   'http://o0.github.io/assets/images/tokyo/hotel2.jpg',
   'http://o0.github.io/assets/images/tokyo/hotel3.jpg'
 ];
+var houseType = {
+  'palace': 'Дворец',
+  'flat': 'Квартира',
+  'house': 'Дом',
+  'bungalo': 'Бунгало',
+};
 
 var NUMBER_ROOMS = 8;
 var offers = [];
-
 var minLocationX = 300;
 var maxLocationX = 900;
 var minLocationY = 130;
@@ -58,15 +63,32 @@ var minRooms = 1;
 var maxRooms = 5;
 var minGuests = 1;
 var maxGuests = 10;
-var pinWidth = 50;
-var pinHeight = 70;
-var houseType = {
-  'palace': 'Дворец',
-  'flat': 'Квартира',
-  'house': 'Дом',
-  'bungalo': 'Бунгало',
-};
+var PIN_WIDTH = 50;
+var PIN_HEIGHT = 70;
+var ENTER_KEYCODE = 13;
+var map = document.querySelector('.map');
+var mapPins = map.querySelector('.map__pins');
+var pinTemplate = document.querySelector('template').content.querySelector('.map__pin'); // нашли шаблон метки
+var mapCardTemplate = document.querySelector('template').content.querySelector('.map__card');
+var popupParent = document.querySelector('.map__filters-container');
+var adForm = document.querySelector('.ad-form');
+var fieldsets = adForm.querySelectorAll('fieldset');
+var mainPin = map.querySelector('.map__pin--main');
+var inputAddress = adForm.querySelector('#address');
 
+var mapCenterX = map.offsetWidth / 2; // определила центр
+var mapCenterY = map.offsetHeight / 2;
+
+mainPin.style.left = mapCenterX - (mainPin.offsetWidth / 2) + 'px'; // сместила главный пин
+mainPin.style.top = mapCenterY - (mainPin.offsetHeight / 2) + 'px';
+
+
+mainPin.addEventListener('mouseup', mainPinClick); // активация страницы
+
+// определение координат главного пина
+function getCoordinates() {
+  inputAddress.value = parseInt(mainPin.style.left, 10) + ', ' + parseInt(mainPin.style.top, 10);
+}
 
 // функция генерации случайного элемента массива
 function getRandomElement(array) {
@@ -74,6 +96,7 @@ function getRandomElement(array) {
 
   return array[randomElement];
 }
+
 
 // функция генерации данных из заданного диапазона
 function getRandomInteger(min, max) {
@@ -120,7 +143,7 @@ function createOffer(id) {
       guests: getRandomInteger(minGuests, maxGuests),
       checkin: getRandomElement(checkinTimes),
       checkout: getRandomElement(checkoutTimes),
-      feauters: getRandomLengthArray(features, 1),
+      features: getRandomLengthArray(features, 1),
       description: '',
       photos: shuffleArray(photos),
     },
@@ -146,42 +169,29 @@ function createOffers() {
   return newOffers;
 }
 
+
 // создаем метку на основе шаблона
+
 function createPinNode(pinObject) {
   var pinNode = pinTemplate.cloneNode(true);
-
-  pinNode.style.left = (pinObject.location.x - pinWidth / 2) + 'px';
-  pinNode.style.top = pinObject.location.y - pinHeight + 'px';
+  pinNode.style.left = pinObject.location.x - PIN_WIDTH / 2 + 'px';
+  pinNode.style.top = pinObject.location.y - PIN_HEIGHT + 'px';
   pinNode.querySelector('img').src = pinObject.author.avatar;
   pinNode.querySelector('img').alt = pinObject.offer.title;
-
+  pinNode.addEventListener('click', function () {
+    var mapCard = map.querySelector('.map__card');
+    if (mapCard) {
+      mapCard.remove();
+    }
+    popupParent.appendChild(renderMapCard(pinObject));
+  });
   return pinNode;
 }
 
 // MAIN FLOW
 
-// У блока .map уберите класс .map--faded.
-var map = document.querySelector('.map');
-map.classList.remove('map--faded');
+// функция создания DOM-элемента объявления и заполнения его данными.  отрисовка 1 объявления
 
-// находим блок  с метками
-var mapPins = map.querySelector('.map__pins');
-var pinTemplate = document.querySelector('template').content.querySelector('.map__pin'); // нашли шаблон метки
-
-// генерируем офферы
-offers = createOffers();
-
-// отрисуйум сгенерированные DOM-элементы в блок .map__pins. Используйте DocumentFragment.
-var pinFragment = document.createDocumentFragment();
-for (var i = 0; i < offers.length; i++) {
-  var pinNode = createPinNode(offers[i]);
-  pinFragment.appendChild(pinNode);
-}
-
-mapPins.appendChild(pinFragment);
-
-// создайте DOM-элемент объявления и заполните его данными из объекта
-var mapCardTemplate = document.querySelector('template').content.querySelector('.map__card');
 function renderMapCard(mapCard) {
   var mapCardElement = mapCardTemplate.cloneNode(true);
   mapCardElement.querySelector('.popup__title').textContent = mapCard.offer.title;
@@ -191,8 +201,8 @@ function renderMapCard(mapCard) {
   mapCardElement.querySelector('.popup__text--capacity').textContent = mapCard.offer.rooms + ' комнаты для ' + mapCard.offer.guests + ' гостей';
   mapCardElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + mapCard.offer.checkin + ', выезд до ' + mapCard.offer.checkout;
   mapCardElement.querySelector('.popup__features').innerHTML = '';
-  for (var j = 0; j < mapCard.offer.length; j++) {
-    mapCardElement.querySelector('.popup__features').innerHTML += '<li class="popup__feature popup__feature--' + mapCardElement.offer.feauters[j] + '"></li>';
+  for (var j = 0; j < mapCard.offer.features.length; j++) {
+    mapCardElement.querySelector('.popup__features').innerHTML += '<li class="popup__feature popup__feature--' + mapCard.offer.features[j] + '"></li>';
   }
   mapCardElement.querySelector('.popup__description').textContent = mapCard.offer.description;
   mapCardElement.querySelector('.popup__photos').textContent = '';
@@ -201,16 +211,37 @@ function renderMapCard(mapCard) {
   }
   mapCardElement.querySelector('.popup__avatar').src = mapCard.author.avatar;
 
+  var closeCard = mapCardElement.querySelector('.popup__close');
+  closeCard.addEventListener('click', function () {
+    mapCardElement.remove();
+  });
   return mapCardElement;
-
 }
 
-// вставьте полученный DOM-элемент в блок .map перед блоком.map__filters-container:
-var mapFiltersContainer = document.querySelector('.map__filters-container');
-
-var fragment = document.createDocumentFragment();
-
-for (var k = 0; k < NUMBER_ROOMS; k++) {
-  fragment.appendChild(renderMapCard(offers[0]));
+// активация странички
+function mainPinClick() {
+  offers = createOffers();
+  var pinFragment = document.createDocumentFragment(); // отрисуйум сгенерированные DOM-элементы в блок .map__pins. Используйте DocumentFragment.
+  for (var i = 0; i < offers.length; i++) {
+    var pinNode = createPinNode(offers[i]);
+    pinFragment.appendChild(pinNode);
+  }
+  map.classList.remove('map--faded'); // снять блок с карты
+  adForm.classList.remove('ad-form--disabled'); // снять блок с полей формы
+  getCoordinates();
+  mapPins.appendChild(pinFragment);
+  fieldsets.forEach(function (item) {
+    item.disabled = false;
+  });
+  mainPin.removeEventListener('mouseup', mainPinClick);
 }
-map.insertBefore(fragment, mapFiltersContainer);
+
+// открытие объявления клавишей Enter
+var activeCard = map.querySelector('.map__pin--main');
+activeCard.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === ENTER_KEYCODE) {
+    mainPinClick();
+  }
+});
+
+
