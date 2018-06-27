@@ -66,6 +66,7 @@ var maxGuests = 10;
 var PIN_WIDTH = 50;
 var PIN_HEIGHT = 70;
 var ENTER_KEYCODE = 13;
+var ESC_KEYCODE = 27;
 var map = document.querySelector('.map');
 var mapPins = map.querySelector('.map__pins');
 var pinTemplate = document.querySelector('template').content.querySelector('.map__pin'); // нашли шаблон метки
@@ -244,4 +245,97 @@ activeCard.addEventListener('keydown', function (evt) {
   }
 });
 
+
+var card = document.querySelector('.map__card.popup');
+var closeButton = card.querySelector('.popup__close');
+
+// // закрытие карточки // не работает
+var closeCard = function () {
+  card.classList.add('hidden');
+  document.removeEventListener('keydown', onPopupEscPress);
+};
+var onPopupEscPress = function (evt) {
+  if (evt.keyCode === ESC_KEYCODE) {
+    closeCard();
+  }
+};
+// closeButton.addEventListener('click', closeCard);
+closeButton.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === ESC_KEYCODE) {
+    closeCard();
+  }
+});
+
+// ---------------------module4-task2-------------------------
+// найти элементы формы по id
+// Время заезда» и «Время выезда» синхронизированы
+// Количество комнат» синхронизировано с полем «Количество мест»
+// подписаться на изменения значения поля количества комнат
+
+// находим нужные элементы в разметке по id
+var timeInField = adForm.querySelector('#timein');
+var timeOutField = adForm.querySelector('#timeout');
+var accommodationType = adForm.querySelector('#type');
+var priceField = adForm.querySelector('#price');
+var roomNumberField = adForm.querySelector('#room_number');
+var capacityField = adForm.querySelector('#capacity');
+
+
+function checkRoomGuests() {
+  if ((roomNumberField.value === '1') && (capacityField.value !== '1')) {
+    capacityField.setCustomValidity('Одноместный номер рассчитан только на одного гостя');
+  } else if ((roomNumberField.value === '2') && (capacityField.value !== '2' && capacityField.value !== '1')) {
+    capacityField.setCustomValidity('В двух комнатах может проживать не более 2 гостей.');
+  } else if ((roomNumberField.value === '3') && (capacityField.value !== '2') && (capacityField.value !== '1') && (capacityField.value !== '3')) {
+    capacityField.setCustomValidity('В трех  комнатах может проживать не более 3 гостей');
+  } else if ((roomNumberField.value === '100') && (capacityField.value !== '0')) {
+    capacityField.setCustomValidity('не для гостей');
+  } else {
+    capacityField.setCustomValidity('');
+  }
+}
+
+// время заезда  неравно времени выезда
+
+function syncTimeOut() {
+  timeInField.value = timeOutField.value;
+}
+
+function syncTimeIn() {
+  timeOutField.value = timeInField.value;
+}
+
+
+function changeAccommodationPrice() {
+  switch (accommodationType.value) {
+    case 'bungalo':
+      priceField.placeholder = 0;
+      priceField.min = 0;
+      break;
+    case 'flat':
+      priceField.placeholder = 1000;
+      priceField.min = 1000;
+      break;
+    case 'house':
+      priceField.placeholder = 5000;
+      priceField.min = 5000;
+      break;
+    case 'palace':
+      priceField.placeholder = 10000;
+      priceField.min = 10000;
+      break;
+  }
+}
+
+accommodationType.addEventListener('change', changeAccommodationPrice);
+capacityField.addEventListener('change', checkRoomGuests);
+roomNumberField.addEventListener('change', checkRoomGuests);
+timeInField.addEventListener('change', syncTimeIn);
+timeOutField.addEventListener('change', syncTimeOut);
+
+
+// ----------------------BACKLOG-------------------------------------
+// закрытие по escape
+// innerHTML
+// photo
 
