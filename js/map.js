@@ -248,13 +248,15 @@ activeCard.addEventListener('keydown', function (evt) {
 
 
 // Функции для возврата страницы в исходное стостояние
-var closeCards = function () {
-  var cards = map.querySelectorAll('.map__card');
-
-  for (var i = 0; i < cards.length; i++) {
-    map.removeChild(cards[i]);
+function closeCards() {
+  var cardsList = map.querySelectorAll('.map__card');
+  if (cardsList) {
+    for (var l = 0; l < cardsList.length; l++) {
+      cardsList[l].classList.add('hidden');
+    }
   }
-};
+}
+
 var removePins = function () {
   var pinsArr = map.querySelectorAll('.map__pin:not(.map__pin--main)');
 
@@ -266,7 +268,7 @@ var removePins = function () {
 function resetPage() {
   removePins();
   closeCards();
-  adForm.reset();
+  // adForm.reset();
   getCoordinates();
 }
 
@@ -288,6 +290,7 @@ function disablePage() {
 function resetForm() {
   disablePage();
 }
+
 reset.addEventListener('click', resetForm);
 
 
@@ -377,10 +380,3 @@ capacityField.addEventListener('change', checkRoomGuests);
 roomNumberField.addEventListener('change', checkRoomGuests);
 timeInField.addEventListener('change', syncTimeIn);
 timeOutField.addEventListener('change', syncTimeOut);
-
-
-// ----------------------BACKLOG-------------------------------------
-// закрытие по escape
-// innerHTML
-// photo
-
