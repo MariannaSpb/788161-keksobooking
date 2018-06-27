@@ -261,14 +261,15 @@ var removePins = function () {
   var pinsArr = map.querySelectorAll('.map__pin:not(.map__pin--main)');
 
   for (var i = 0; i < pinsArr.length; i++) {
-    mapPins.removeChild(pinsArr[i]);
+    pinsArr[i].remove();
+    // mapPins.removeChild(pinsArr[i]);
   }
 };
 
 function resetPage() {
   removePins();
   closeCards();
-  // adForm.reset();
+  adForm.reset();
   getCoordinates();
 }
 
@@ -374,6 +375,27 @@ function changeAccommodationPrice() {
       break;
   }
 }
+
+
+// Функции для подсвечиваня невалидвой формы
+var isInvalid = function (input) {
+  if (input.checkValidity() === false) {
+    input.style.boxShadow = '0 0 2px 2px #ff6547';
+  }
+};
+var isValid = function (input) {
+  if (input.checkValidity() === true) {
+    input.style.boxShadow = 'none';
+  }
+};
+
+adForm.querySelector('.ad-form__submit').addEventListener('click', function () {
+  isInvalid(adForm.querySelector('#title'));
+  isInvalid(adForm.querySelector('#price'));
+  isValid(adForm.querySelector('#title'));
+  isValid(adForm.querySelector('#price'));
+});
+
 
 accommodationType.addEventListener('change', changeAccommodationPrice);
 capacityField.addEventListener('change', checkRoomGuests);
