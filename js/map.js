@@ -74,6 +74,7 @@ var mapCardTemplate = document.querySelector('template').content.querySelector('
 var popupParent = document.querySelector('.map__filters-container');
 var adForm = document.querySelector('.ad-form');
 var fieldsets = adForm.querySelectorAll('fieldset');
+var reset = adForm.querySelector('.ad-form__reset');
 var mainPin = map.querySelector('.map__pin--main');
 var inputAddress = adForm.querySelector('#address');
 
@@ -246,25 +247,69 @@ activeCard.addEventListener('keydown', function (evt) {
 });
 
 
-var card = document.querySelector('.map__card.popup');
-var closeButton = card.querySelector('.popup__close');
+// Функции для возврата страницы в исходное стостояние
+var closeCards = function () {
+  var cards = map.querySelectorAll('.map__card');
 
-// // закрытие карточки // не работает
-var closeCard = function () {
-  card.classList.add('hidden');
-  document.removeEventListener('keydown', onPopupEscPress);
-};
-var onPopupEscPress = function (evt) {
-  if (evt.keyCode === ESC_KEYCODE) {
-    closeCard();
+  for (var i = 0; i < cards.length; i++) {
+    map.removeChild(cards[i]);
   }
 };
-// closeButton.addEventListener('click', closeCard);
-closeButton.addEventListener('keydown', function (evt) {
-  if (evt.keyCode === ESC_KEYCODE) {
-    closeCard();
+var removePins = function () {
+  var pinsArr = map.querySelectorAll('.map__pin:not(.map__pin--main)');
+
+  for (var i = 0; i < pinsArr.length; i++) {
+    mapPins.removeChild(pinsArr[i]);
   }
-});
+};
+
+function resetPage() {
+  removePins();
+  closeCards();
+  adForm.reset();
+  getCoordinates();
+}
+
+var toggleDisabledAttr = function (arr, value) {
+  for (var i = 0; i < arr.length; i++) {
+    arr[i].disabled = value;
+  }
+};
+
+
+// Вовзращает неактивное состяние
+function disablePage() {
+  map.classList.add('map--faded');
+  adForm.classList.add('ad-form--disabled');
+  resetPage();
+  toggleDisabledAttr(fieldsets, true);
+}
+
+function resetForm() {
+  disablePage();
+}
+reset.addEventListener('click', resetForm);
+
+
+// var card = document.querySelector('.map__card.popup');
+// var closeButton = card.querySelector('.popup__close');
+
+// // // закрытие карточки // не работает
+// var closeCard = function () {
+//   card.classList.add('hidden');
+//   document.removeEventListener('keydown', onPopupEscPress);
+// };
+// var onPopupEscPress = function (evt) {
+//   if (evt.keyCode === ESC_KEYCODE) {
+//     closeCard();
+//   }
+// };
+// // closeButton.addEventListener('click', closeCard);
+// closeButton.addEventListener('keydown', function (evt) {
+//   if (evt.keyCode === ESC_KEYCODE) {
+//     closeCard();
+//   }
+// });
 
 // ---------------------module4-task2-------------------------
 // найти элементы формы по id
