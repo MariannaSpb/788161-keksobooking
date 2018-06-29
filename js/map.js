@@ -298,6 +298,7 @@ function removePins() {
 function resetPage() {
   closeCards();
   removePins();
+  adForm.reset();
   getCoordinates();
   map.classList.add('map--faded');
   fieldsets.forEach(function (item) {
