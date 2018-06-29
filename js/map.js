@@ -305,7 +305,7 @@ function resetPage() {
     item.disabled = true;
   });
   adForm.classList.add('ad-form--disabled');
-  resetButton.removeEventListener('click', resetPage);
+  // resetButton.removeEventListener('click', resetPage);
   mainPin.addEventListener('mouseup', mainPinClick); // активация страницы
   mainPin.addEventListener('keydown', function (evt) {
     if (evt.keyCode === ENTER_KEYCODE) {
