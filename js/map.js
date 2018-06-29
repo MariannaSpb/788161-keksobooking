@@ -74,9 +74,10 @@ var mapCardTemplate = document.querySelector('template').content.querySelector('
 var popupParent = document.querySelector('.map__filters-container');
 var adForm = document.querySelector('.ad-form');
 var fieldsets = adForm.querySelectorAll('fieldset');
-var reset = adForm.querySelector('.ad-form__reset');
+var resetButton = adForm.querySelector('.ad-form__reset');
 var mainPin = map.querySelector('.map__pin--main');
 var inputAddress = adForm.querySelector('#address');
+// var closeButton = document.querySelector('.popup__close');
 
 var mapCenterX = map.offsetWidth / 2; // определила центр
 var mapCenterY = map.offsetHeight / 2;
@@ -86,6 +87,11 @@ mainPin.style.top = mapCenterY - (mainPin.offsetHeight / 2) + 'px';
 
 
 mainPin.addEventListener('mouseup', mainPinClick); // активация страницы
+mainPin.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === ENTER_KEYCODE) {
+    mainPinClick();
+  }
+});
 
 // определение координат главного пина
 function getCoordinates() {
@@ -222,9 +228,12 @@ function renderMapCard(mapCard) {
 
 // активация странички
 function mainPinClick() {
+ // console.log('offers.length');
   offers = createOffers();
+
   var pinFragment = document.createDocumentFragment(); // отрисуйум сгенерированные DOM-элементы в блок .map__pins. Используйте DocumentFragment.
   for (var i = 0; i < offers.length; i++) {
+   // console.log(i);
     var pinNode = createPinNode(offers[i]);
     pinFragment.appendChild(pinNode);
   }
@@ -236,15 +245,8 @@ function mainPinClick() {
     item.disabled = false;
   });
   mainPin.removeEventListener('mouseup', mainPinClick);
+  mainPin.removeEventListener('keydown', mainPinClick);
 }
-
-// открытие объявления клавишей Enter
-var activeCard = map.querySelector('.map__pin--main');
-activeCard.addEventListener('keydown', function (evt) {
-  if (evt.keyCode === ENTER_KEYCODE) {
-    mainPinClick();
-  }
-});
 
 
 // Функции для возврата страницы в исходное стостояние
@@ -257,46 +259,62 @@ function closeCards() {
   }
 }
 
-var removePins = function () {
+// var closeButton = document.querySelector('.popup__close');
+// closeButton.addEventListener('keydown', function (evt) {
+//   if (evt.keyCode === ESC_KEYCODE) {
+//     closeCards();
+//   }
+// });
+
+function removePins() {
   var pinsArr = map.querySelectorAll('.map__pin:not(.map__pin--main)');
 
   for (var i = 0; i < pinsArr.length; i++) {
     pinsArr[i].remove();
     // mapPins.removeChild(pinsArr[i]);
   }
-};
+}
+
+// function resetPage() {
+//   removePins();
+//   closeCards();
+//   adForm.reset();
+//   getCoordinates();
+// }
+
+
+// // Вовзращает неактивное состяние
+// function disablePage() {
+//   map.classList.add('map--faded');
+//   adForm.classList.add('ad-form--disabled');
+//   resetPage();
+//   toggleDisabledAttr(fieldsets, true);
+// }
+
+// function resetForm() {
+//   disablePage();
+// }
 
 function resetPage() {
-  removePins();
   closeCards();
-  adForm.reset();
+  removePins();
   getCoordinates();
-}
-
-var toggleDisabledAttr = function (arr, value) {
-  for (var i = 0; i < arr.length; i++) {
-    arr[i].disabled = value;
-  }
-};
-
-
-// Вовзращает неактивное состяние
-function disablePage() {
   map.classList.add('map--faded');
+  fieldsets.forEach(function (item) {
+    item.disabled = true;
+  });
   adForm.classList.add('ad-form--disabled');
-  resetPage();
-  toggleDisabledAttr(fieldsets, true);
+  resetButton.removeEventListener('click', resetPage);
+  mainPin.addEventListener('mouseup', mainPinClick); // активация страницы
+  mainPin.addEventListener('keydown', function (evt) {
+    if (evt.keyCode === ENTER_KEYCODE) {
+      mainPinClick();
+    }
+  });
 }
 
-function resetForm() {
-  disablePage();
-}
 
-reset.addEventListener('click', resetForm);
-
-
-// var card = document.querySelector('.map__card.popup');
-// var closeButton = card.querySelector('.popup__close');
+resetButton.addEventListener('click', resetPage);
 
 // // // закрытие карточки // не работает
 // var closeCard = function () {
@@ -316,19 +334,13 @@ reset.addEventListener('click', resetForm);
 // });
 
 // ---------------------module4-task2-------------------------
-// найти элементы формы по id
-// Время заезда» и «Время выезда» синхронизированы
-// Количество комнат» синхронизировано с полем «Количество мест»
-// подписаться на изменения значения поля количества комнат
-
-// находим нужные элементы в разметке по id
 var timeInField = adForm.querySelector('#timein');
 var timeOutField = adForm.querySelector('#timeout');
 var accommodationType = adForm.querySelector('#type');
 var priceField = adForm.querySelector('#price');
 var roomNumberField = adForm.querySelector('#room_number');
 var capacityField = adForm.querySelector('#capacity');
-
+// var descriptionField = adForm.querySelector('#description');
 
 function checkRoomGuests() {
   if ((roomNumberField.value === '1') && (capacityField.value !== '1')) {
@@ -402,3 +414,14 @@ capacityField.addEventListener('change', checkRoomGuests);
 roomNumberField.addEventListener('change', checkRoomGuests);
 timeInField.addEventListener('change', syncTimeIn);
 timeOutField.addEventListener('change', syncTimeOut);
+
+
+// ---------------BACKLOG-----------------
+// escape
+// массив с фотками
+// ограничения по гостям
+// сбрасивание страницы после отправки формы
+//
+//
+//
+//
