@@ -66,7 +66,7 @@ var maxGuests = 10;
 var PIN_WIDTH = 50;
 var PIN_HEIGHT = 70;
 var ENTER_KEYCODE = 13;
-var ESC_KEYCODE = 27;
+// var ESC_KEYCODE = 27;
 var map = document.querySelector('.map');
 var mapPins = map.querySelector('.map__pins');
 var pinTemplate = document.querySelector('template').content.querySelector('.map__pin'); // нашли шаблон метки
@@ -228,12 +228,12 @@ function renderMapCard(mapCard) {
 
 // активация странички
 function mainPinClick() {
- // console.log('offers.length');
+// console.log('offers.length');
   offers = createOffers();
 
   var pinFragment = document.createDocumentFragment(); // отрисуйум сгенерированные DOM-элементы в блок .map__pins. Используйте DocumentFragment.
   for (var i = 0; i < offers.length; i++) {
-   // console.log(i);
+  // console.log(i);
     var pinNode = createPinNode(offers[i]);
     pinFragment.appendChild(pinNode);
   }
