@@ -66,6 +66,7 @@ var maxGuests = 10;
 var PIN_WIDTH = 50;
 var PIN_HEIGHT = 70;
 var ENTER_KEYCODE = 13;
+// var ESC_KEYCODE = 27;
 var map = document.querySelector('.map');
 var mapPins = map.querySelector('.map__pins');
 var pinTemplate = document.querySelector('template').content.querySelector('.map__pin'); // нашли шаблон метки
@@ -73,8 +74,10 @@ var mapCardTemplate = document.querySelector('template').content.querySelector('
 var popupParent = document.querySelector('.map__filters-container');
 var adForm = document.querySelector('.ad-form');
 var fieldsets = adForm.querySelectorAll('fieldset');
+var resetButton = adForm.querySelector('.ad-form__reset');
 var mainPin = map.querySelector('.map__pin--main');
 var inputAddress = adForm.querySelector('#address');
+// var closeButton = document.querySelector('.popup__close');
 
 var mapCenterX = map.offsetWidth / 2; // определила центр
 var mapCenterY = map.offsetHeight / 2;
@@ -84,6 +87,11 @@ mainPin.style.top = mapCenterY - (mainPin.offsetHeight / 2) + 'px';
 
 
 mainPin.addEventListener('mouseup', mainPinClick); // активация страницы
+mainPin.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === ENTER_KEYCODE) {
+    mainPinClick();
+  }
+});
 
 // определение координат главного пина
 function getCoordinates() {
@@ -220,9 +228,12 @@ function renderMapCard(mapCard) {
 
 // активация странички
 function mainPinClick() {
+// console.log('offers.length');
   offers = createOffers();
+
   var pinFragment = document.createDocumentFragment(); // отрисуйум сгенерированные DOM-элементы в блок .map__pins. Используйте DocumentFragment.
   for (var i = 0; i < offers.length; i++) {
+  // console.log(i);
     var pinNode = createPinNode(offers[i]);
     pinFragment.appendChild(pinNode);
   }
@@ -234,14 +245,184 @@ function mainPinClick() {
     item.disabled = false;
   });
   mainPin.removeEventListener('mouseup', mainPinClick);
+  mainPin.removeEventListener('keydown', mainPinClick);
 }
 
-// открытие объявления клавишей Enter
-var activeCard = map.querySelector('.map__pin--main');
-activeCard.addEventListener('keydown', function (evt) {
-  if (evt.keyCode === ENTER_KEYCODE) {
-    mainPinClick();
+
+// Функции для возврата страницы в исходное стостояние
+function closeCards() {
+  var cardsList = map.querySelectorAll('.map__card');
+  if (cardsList) {
+    for (var l = 0; l < cardsList.length; l++) {
+      cardsList[l].classList.add('hidden');
+    }
   }
+}
+
+// var closeButton = document.querySelector('.popup__close');
+// closeButton.addEventListener('keydown', function (evt) {
+//   if (evt.keyCode === ESC_KEYCODE) {
+//     closeCards();
+//   }
+// });
+
+function removePins() {
+  var pinsArr = map.querySelectorAll('.map__pin:not(.map__pin--main)');
+
+  for (var i = 0; i < pinsArr.length; i++) {
+    pinsArr[i].remove();
+    // mapPins.removeChild(pinsArr[i]);
+  }
+}
+
+// function resetPage() {
+//   removePins();
+//   closeCards();
+//   adForm.reset();
+//   getCoordinates();
+// }
+
+
+// // Вовзращает неактивное состяние
+// function disablePage() {
+//   map.classList.add('map--faded');
+//   adForm.classList.add('ad-form--disabled');
+//   resetPage();
+//   toggleDisabledAttr(fieldsets, true);
+// }
+
+// function resetForm() {
+//   disablePage();
+// }
+
+function resetPage() {
+  closeCards();
+  removePins();
+  adForm.reset();
+  getCoordinates();
+  map.classList.add('map--faded');
+  fieldsets.forEach(function (item) {
+    item.disabled = true;
+  });
+  adForm.classList.add('ad-form--disabled');
+  // resetButton.removeEventListener('click', resetPage);
+  mainPin.addEventListener('mouseup', mainPinClick); // активация страницы
+  mainPin.addEventListener('keydown', function (evt) {
+    if (evt.keyCode === ENTER_KEYCODE) {
+      mainPinClick();
+    }
+  });
+}
+
+
+resetButton.addEventListener('click', resetPage);
+
+// // // закрытие карточки // не работает
+// var closeCard = function () {
+//   card.classList.add('hidden');
+//   document.removeEventListener('keydown', onPopupEscPress);
+// };
+// var onPopupEscPress = function (evt) {
+//   if (evt.keyCode === ESC_KEYCODE) {
+//     closeCard();
+//   }
+// };
+// // closeButton.addEventListener('click', closeCard);
+// closeButton.addEventListener('keydown', function (evt) {
+//   if (evt.keyCode === ESC_KEYCODE) {
+//     closeCard();
+//   }
+// });
+
+// ---------------------module4-task2-------------------------
+var timeInField = adForm.querySelector('#timein');
+var timeOutField = adForm.querySelector('#timeout');
+var accommodationType = adForm.querySelector('#type');
+var priceField = adForm.querySelector('#price');
+var roomNumberField = adForm.querySelector('#room_number');
+var capacityField = adForm.querySelector('#capacity');
+// var descriptionField = adForm.querySelector('#description');
+
+function checkRoomGuests() {
+  if ((roomNumberField.value === '1') && (capacityField.value !== '1')) {
+    capacityField.setCustomValidity('Одноместный номер рассчитан только на одного гостя');
+  } else if ((roomNumberField.value === '2') && (capacityField.value !== '2' && capacityField.value !== '1')) {
+    capacityField.setCustomValidity('В двух комнатах может проживать не более 2 гостей.');
+  } else if ((roomNumberField.value === '3') && (capacityField.value !== '2') && (capacityField.value !== '1') && (capacityField.value !== '3')) {
+    capacityField.setCustomValidity('В трех  комнатах может проживать не более 3 гостей');
+  } else if ((roomNumberField.value === '100') && (capacityField.value !== '0')) {
+    capacityField.setCustomValidity('не для гостей');
+  } else {
+    capacityField.setCustomValidity('');
+  }
+}
+
+// время заезда  неравно времени выезда
+
+function syncTimeOut() {
+  timeInField.value = timeOutField.value;
+}
+
+function syncTimeIn() {
+  timeOutField.value = timeInField.value;
+}
+
+
+function changeAccommodationPrice() {
+  switch (accommodationType.value) {
+    case 'bungalo':
+      priceField.placeholder = 0;
+      priceField.min = 0;
+      break;
+    case 'flat':
+      priceField.placeholder = 1000;
+      priceField.min = 1000;
+      break;
+    case 'house':
+      priceField.placeholder = 5000;
+      priceField.min = 5000;
+      break;
+    case 'palace':
+      priceField.placeholder = 10000;
+      priceField.min = 10000;
+      break;
+  }
+}
+
+
+// Функции для подсвечиваня невалидвой формы
+var isInvalid = function (input) {
+  if (input.checkValidity() === false) {
+    input.style.boxShadow = '0 0 2px 2px #ff6547';
+  }
+};
+var isValid = function (input) {
+  if (input.checkValidity() === true) {
+    input.style.boxShadow = 'none';
+  }
+};
+
+adForm.querySelector('.ad-form__submit').addEventListener('click', function () {
+  isInvalid(adForm.querySelector('#title'));
+  isInvalid(adForm.querySelector('#price'));
+  isValid(adForm.querySelector('#title'));
+  isValid(adForm.querySelector('#price'));
 });
 
 
+accommodationType.addEventListener('change', changeAccommodationPrice);
+capacityField.addEventListener('change', checkRoomGuests);
+roomNumberField.addEventListener('change', checkRoomGuests);
+timeInField.addEventListener('change', syncTimeIn);
+timeOutField.addEventListener('change', syncTimeOut);
+
+
+// ---------------BACKLOG-----------------
+// escape
+// массив с фотками
+// ограничения по гостям
+// сбрасивание страницы после отправки формы
+//
+//
+//
+//
