@@ -66,7 +66,6 @@ var maxGuests = 10;
 var PIN_WIDTH = 50;
 var PIN_HEIGHT = 70;
 var ENTER_KEYCODE = 13;
-// var ESC_KEYCODE = 27;
 var map = document.querySelector('.map');
 var mapPins = map.querySelector('.map__pins');
 var pinTemplate = document.querySelector('template').content.querySelector('.map__pin'); // нашли шаблон метки
@@ -77,7 +76,7 @@ var fieldsets = adForm.querySelectorAll('fieldset');
 var resetButton = adForm.querySelector('.ad-form__reset');
 var mainPin = map.querySelector('.map__pin--main');
 var inputAddress = adForm.querySelector('#address');
-// var closeButton = document.querySelector('.popup__close');
+
 
 var mapCenterX = map.offsetWidth / 2; // определила центр
 var mapCenterY = map.offsetHeight / 2;
@@ -259,12 +258,6 @@ function closeCards() {
   }
 }
 
-// var closeButton = document.querySelector('.popup__close');
-// closeButton.addEventListener('keydown', function (evt) {
-//   if (evt.keyCode === ESC_KEYCODE) {
-//     closeCards();
-//   }
-// });
 
 function removePins() {
   var pinsArr = map.querySelectorAll('.map__pin:not(.map__pin--main)');
@@ -275,25 +268,6 @@ function removePins() {
   }
 }
 
-// function resetPage() {
-//   removePins();
-//   closeCards();
-//   adForm.reset();
-//   getCoordinates();
-// }
-
-
-// // Вовзращает неактивное состяние
-// function disablePage() {
-//   map.classList.add('map--faded');
-//   adForm.classList.add('ad-form--disabled');
-//   resetPage();
-//   toggleDisabledAttr(fieldsets, true);
-// }
-
-// function resetForm() {
-//   disablePage();
-// }
 
 function resetPage() {
   closeCards();
@@ -317,22 +291,6 @@ function resetPage() {
 
 resetButton.addEventListener('click', resetPage);
 
-// // // закрытие карточки // не работает
-// var closeCard = function () {
-//   card.classList.add('hidden');
-//   document.removeEventListener('keydown', onPopupEscPress);
-// };
-// var onPopupEscPress = function (evt) {
-//   if (evt.keyCode === ESC_KEYCODE) {
-//     closeCard();
-//   }
-// };
-// // closeButton.addEventListener('click', closeCard);
-// closeButton.addEventListener('keydown', function (evt) {
-//   if (evt.keyCode === ESC_KEYCODE) {
-//     closeCard();
-//   }
-// });
 
 // ---------------------module4-task2-------------------------
 var timeInField = adForm.querySelector('#timein');
@@ -415,14 +373,3 @@ capacityField.addEventListener('change', checkRoomGuests);
 roomNumberField.addEventListener('change', checkRoomGuests);
 timeInField.addEventListener('change', syncTimeIn);
 timeOutField.addEventListener('change', syncTimeOut);
-
-
-// ---------------BACKLOG-----------------
-// escape
-// массив с фотками
-// ограничения по гостям
-// сбрасивание страницы после отправки формы
-//
-//
-//
-//
