@@ -53,19 +53,23 @@ var houseType = {
 
 var NUMBER_ROOMS = 8;
 var offers = [];
-var minLocationX = 300;
-var maxLocationX = 900;
-var minLocationY = 130;
-var maxLocationY = 630;
+var MAX_POSITION_Y = 630;
+var MIN_POSITION_Y = 130;
+var MIN_POSITION_X = 300;
+var MAX_POSITION_X = 900;
+var PIN_WIDTH = 50;
+var PIN_HEIGHT = 70;
+var ENTER_KEYCODE = 13;
 var minPrice = 1000;
 var maxPrice = 1000000;
 var minRooms = 1;
 var maxRooms = 5;
 var minGuests = 1;
 var maxGuests = 10;
-var PIN_WIDTH = 50;
-var PIN_HEIGHT = 70;
-var ENTER_KEYCODE = 13;
+var pinMainSize = 62;
+var pinMainArrow = 22;
+var pinMainHalfSize = pinMainSize / 2;
+var pinMainAll = pinMainSize + pinMainArrow;
 var map = document.querySelector('.map');
 var mapPins = map.querySelector('.map__pins');
 var pinTemplate = document.querySelector('template').content.querySelector('.map__pin'); // нашли шаблон метки
@@ -125,8 +129,8 @@ function getRandomLengthArray(array, minSize) {
 
 // Координаты меток
 function createCoords() {
-  var locationX = getRandomInteger(minLocationX, maxLocationX);
-  var locationY = getRandomInteger(minLocationY, maxLocationY);
+  var locationX = getRandomInteger(MIN_POSITION_X, MAX_POSITION_X);
+  var locationY = getRandomInteger(MIN_POSITION_Y, MAX_POSITION_Y);
 
   return {x: locationX, y: locationY};
 }
@@ -374,21 +378,9 @@ timeOutField.addEventListener('change', syncTimeOut);
 
 // --------------------------module5-task1------------------------------
 
-var mapPinsList = document.querySelector('.map__pins');
-var pinMainSize = 62;
-var pinMainArrow = 22;
-var pinMainHalfSize = pinMainSize / 2;
-var pinMainAll = pinMainSize + pinMainArrow;
-
-
-// тут должен стаять обработчик активации страницы
-
-
 var mainPinHandler = map.querySelector('.map__pin--main');
 
 mainPinHandler.addEventListener('mousedown', function (evt) {
-  var MAX_POSITION_Y = 630;
-  var MIN_POSITION_Y = 130;
 
   evt.preventDefault();
   // запомним координаты начальные
@@ -422,11 +414,11 @@ mainPinHandler.addEventListener('mousedown', function (evt) {
   var onMouseUp = function (upEvt) {
     upEvt.preventDefault();
 
-    mapPinsList.removeEventListener('mousemove', onMouseMove);
-    mapPinsList.removeEventListener('mouseup', onMouseUp);
+    mapPins.removeEventListener('mousemove', onMouseMove);
+    mapPins.removeEventListener('mouseup', onMouseUp);
   };
 
-  mapPinsList.addEventListener('mousemove', onMouseMove);
-  mapPinsList.addEventListener('mouseup', onMouseUp);
+  mapPins.addEventListener('mousemove', onMouseMove);
+  mapPins.addEventListener('mouseup', onMouseUp);
 });
 
