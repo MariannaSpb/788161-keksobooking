@@ -55,8 +55,10 @@ var NUMBER_ROOMS = 8;
 var offers = [];
 var MAX_POSITION_Y = 630;
 var MIN_POSITION_Y = 130;
-var MIN_POSITION_X = 300;
-var MAX_POSITION_X = 900;
+var minCoordsX = 0;
+var maxCoordsX = document.querySelector('.map__pins').offsetWidth;
+// var MIN_POSITION_X = 300;
+// var MAX_POSITION_X = 900;
 var PIN_WIDTH = 50;
 var PIN_HEIGHT = 70;
 var ENTER_KEYCODE = 13;
@@ -80,13 +82,11 @@ var fieldsets = adForm.querySelectorAll('fieldset');
 var resetButton = adForm.querySelector('.ad-form__reset');
 var mainPin = map.querySelector('.map__pin--main');
 var inputAddress = adForm.querySelector('#address');
-
 var mapCenterX = map.offsetWidth / 2; // определила центр
 var mapCenterY = map.offsetHeight / 2;
 
 mainPin.style.left = mapCenterX - (mainPin.offsetWidth / 2) + 'px'; // сместила главный пин
 mainPin.style.top = mapCenterY - (mainPin.offsetHeight / 2) + 'px';
-
 
 mainPin.addEventListener('mousedown', mainPinClick); // активация страницы
 mainPin.addEventListener('keydown', function (evt) {
@@ -129,8 +129,10 @@ function getRandomLengthArray(array, minSize) {
 
 // Координаты меток
 function createCoords() {
-  var locationX = getRandomInteger(MIN_POSITION_X, MAX_POSITION_X);
+  // var locationX = getRandomInteger(MIN_POSITION_X, MAX_POSITION_X);
+  var locationX = getRandomInteger(minCoordsX, maxCoordsX);
   var locationY = getRandomInteger(MIN_POSITION_Y, MAX_POSITION_Y);
+
 
   return {x: locationX, y: locationY};
 }
@@ -185,6 +187,7 @@ function createOffers() {
 function createPinNode(pinObject) {
   var pinNode = pinTemplate.cloneNode(true);
   pinNode.style.left = pinObject.location.x - PIN_WIDTH / 2 + 'px';
+  // pinNode.style.left = pinObject.location.x + 'px';
   pinNode.style.top = pinObject.location.y - PIN_HEIGHT + 'px';
   pinNode.querySelector('img').src = pinObject.author.avatar;
   pinNode.querySelector('img').alt = pinObject.offer.title;
@@ -420,3 +423,8 @@ mainPinHandler.addEventListener('mousedown', function (evt) {
   mapPins.addEventListener('mouseup', onMouseUp);
 });
 
+// ------------------BACKLOG----------------------
+// фотки переделать
+// пины адаптировать
+//
+//
