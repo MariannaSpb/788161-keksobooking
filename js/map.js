@@ -84,7 +84,7 @@ mainPin.style.left = mapCenterX - (mainPin.offsetWidth / 2) + 'px'; // смес�
 mainPin.style.top = mapCenterY - (mainPin.offsetHeight / 2) + 'px';
 
 
-mainPin.addEventListener('mouseup', mainPinClick); // активация страницы
+mainPin.addEventListener('mousedown', mainPinClick); // активация страницы
 mainPin.addEventListener('keydown', function (evt) {
   if (evt.keyCode === ENTER_KEYCODE) {
     mainPinClick();
@@ -242,7 +242,7 @@ function mainPinClick() {
   fieldsets.forEach(function (item) {
     item.disabled = false;
   });
-  mainPin.removeEventListener('mouseup', mainPinClick);
+  mainPin.removeEventListener('mousedown', mainPinClick);
   mainPin.removeEventListener('keydown', mainPinClick);
 }
 
