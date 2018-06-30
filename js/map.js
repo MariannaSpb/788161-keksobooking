@@ -388,12 +388,10 @@ mainPinHandler.addEventListener('mousedown', function (evt) {
     x: evt.clientX,
     y: evt.clientY
   };
-  // var dragged = false;
 
   // функция перемещения
-  var onMouseMove = function (moveEvt) {
+  function onMouseMove(moveEvt) {
     moveEvt.preventDefault();
-    // dragged = true;
     // смещение
     var shift = {
       x: startCoords.x - moveEvt.clientX,
@@ -403,14 +401,14 @@ mainPinHandler.addEventListener('mousedown', function (evt) {
     var pinLeft = evt.clientX - shift.x;
     var pinTop = evt.clientY - shift.y;
 
-    // переопределиляю
+    // переопределяю
     if (pinTop > MIN_POSITION_Y && pinTop < MAX_POSITION_Y && pinLeft > (map.offsetLeft + pinMainHalfSize) && pinLeft < (map.offsetLeft + map.clientWidth - pinMainHalfSize)) {
       mainPin.style.left = (pinLeft - map.offsetLeft - pinMainHalfSize) + 'px';
       mainPin.style.top = (pinTop - pinMainHalfSize) + 'px';
       inputAddress.value = (pinLeft - map.offsetLeft) + ', ' + (pinTop + pinMainHalfSize + pinMainArrow);
     }
 
-  };
+  }
   var onMouseUp = function (upEvt) {
     upEvt.preventDefault();
 
