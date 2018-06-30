@@ -93,7 +93,7 @@ mainPin.addEventListener('keydown', function (evt) {
 
 // определение координат главного пина
 function getCoordinates() {
-  inputAddress.value = parseInt(mainPin.style.left, 10) + ', ' + parseInt(mainPin.style.top, 10);
+  inputAddress.value = parseInt(mainPin.style.left + pinMainHalfSize, 10) + ', ' + parseInt(mainPin.style.top + pinMainAll, 10);
 }
 
 // функция генерации случайного элемента массива
@@ -271,13 +271,14 @@ function resetPage() {
   closeCards();
   removePins();
   adForm.reset();
+  mainPin.style.left = mapCenterX - (mainPin.offsetWidth / 2) + 'px'; // сместила главный пин
+  mainPin.style.top = mapCenterY - (mainPin.offsetHeight / 2) + 'px';
   getCoordinates();
   map.classList.add('map--faded');
   fieldsets.forEach(function (item) {
     item.disabled = true;
   });
   adForm.classList.add('ad-form--disabled');
-  // resetButton.removeEventListener('click', resetPage);
   mainPin.addEventListener('mouseup', mainPinClick); // активация страницы
   mainPin.addEventListener('keydown', function (evt) {
     if (evt.keyCode === ENTER_KEYCODE) {
@@ -297,7 +298,6 @@ var accommodationType = adForm.querySelector('#type');
 var priceField = adForm.querySelector('#price');
 var roomNumberField = adForm.querySelector('#room_number');
 var capacityField = adForm.querySelector('#capacity');
-// var descriptionField = adForm.querySelector('#description');
 
 function checkRoomGuests() {
   if ((roomNumberField.value === '1') && (capacityField.value !== '1')) {
@@ -378,11 +378,8 @@ var mapPinsList = document.querySelector('.map__pins');
 var pinMainSize = 62;
 var pinMainArrow = 22;
 var pinMainHalfSize = pinMainSize / 2;
-var pointOfPinX = Math.round(mainPin.offsetLeft);
-var pointOfPinY = Math.round(mainPin.offsetTop);
+var pinMainAll = pinMainSize + pinMainArrow;
 
-// до активации страницы
-inputAddress.value = pointOfPinX + ', ' + pointOfPinY;
 
 // тут должен стаять обработчик активации страницы
 
