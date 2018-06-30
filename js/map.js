@@ -251,6 +251,7 @@ function mainPinClick() {
   });
   mainPin.removeEventListener('mousedown', mainPinClick);
   mainPin.removeEventListener('keydown', mainPinClick);
+  mainPin.removeEventListener('mouseup', mainPinClick);
 }
 
 
