@@ -2,6 +2,7 @@
 (function () {
 
   var ENTER_KEYCODE = 13;
+  var ESC_KEYCODE = 27;
 
 
   // функция генерации случайного элемента массива
@@ -34,5 +35,8 @@
     getRandomInteger: getRandomInteger,
     shuffleArray: shuffleArray,
     getRandomLengthArray: getRandomLengthArray,
+    ENTER_KEYCODE: ENTER_KEYCODE,
+    ESC_KEYCODE: ESC_KEYCODE
+
   };
 })();

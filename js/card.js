@@ -119,12 +119,16 @@
     closeButton.addEventListener('click', function () {
       mapCardElement.remove();
     });
-      closeButton.addEventListener('keydown', function (evt) {
-        if(evt.keyCode === 27) {
-          mapCardElement.remove();
-        }
-    });
+    closeButton.addEventListener('keydown', onPopupEscapePress);
     return mapCardElement;
+  }
+
+  // Закрытие попапа по нажатию на esc
+  function onPopupEscapePress(evt) {
+    var mapCardElement = window.map.map.querySelector('.map__card'); // function (evt)
+    if (evt.keyCode === 27) {
+      mapCardElement.remove();
+    }
   }
 
   function closeCards() {

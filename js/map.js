@@ -60,7 +60,10 @@
     mainPin.removeEventListener('mousedown', mainPinClick);
     mainPin.removeEventListener('keydown', mainPinClick);
     mainPin.removeEventListener('mouseup', mainPinClick);
+    mainPin.removeEventListener('keydown', window.form.onPopupEnterPress);
   }
+
+
 
   var mainPinHandler = map.querySelector('.map__pin--main');
 

@@ -13,6 +13,7 @@
   var fieldsets = adForm.querySelectorAll('fieldset');
   var mainPin = map.querySelector('.map__pin--main');
 
+
   // время заезда  неравно времени выезда
 
   function syncTimeOut() {
@@ -79,11 +80,15 @@
     });
     adForm.classList.add('ad-form--disabled');
     mainPin.addEventListener('mouseup', window.map.mainPinClick); // активация страницы
-    mainPin.addEventListener('keydown', function (evt) {
-      if (evt.keyCode === ENTER_KEYCODE) {
-        window.map.mainPinClick();
-      }
-    });
+    mainPin.addEventListener('keydown', onPopupEnterPress);
+  }
+
+  mainPin.removeEventListener('keydown', onPopupEnterPress);
+  // функция нажатия на гл пин enterom
+  function onPopupEnterPress(evt) {
+    if (evt.keyCode === window.utils.ENTER_KEYCODE) {
+      window.map.mainPinClick();
+    }
   }
 
   resetButton.addEventListener('click', resetPage);
@@ -109,5 +114,6 @@
 
   window.form = {
     fieldsets: fieldsets,
+    onPopupEnterPress: onPopupEnterPress
   };
 })();
