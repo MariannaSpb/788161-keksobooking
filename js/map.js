@@ -53,20 +53,23 @@ var houseType = {
 
 var NUMBER_ROOMS = 8;
 var offers = [];
-var minLocationX = 300;
-var maxLocationX = 900;
-var minLocationY = 130;
-var maxLocationY = 630;
+var MAX_POSITION_Y = 630;
+var MIN_POSITION_Y = 130;
+var MIN_POSITION_X = 0;
+var MAX_POSITION_X = document.querySelector('.map__pins').clientWidth;
+var PIN_WIDTH = 50;
+var PIN_HEIGHT = 70;
+var ENTER_KEYCODE = 13;
 var minPrice = 1000;
 var maxPrice = 1000000;
 var minRooms = 1;
 var maxRooms = 5;
 var minGuests = 1;
 var maxGuests = 10;
-var PIN_WIDTH = 50;
-var PIN_HEIGHT = 70;
-var ENTER_KEYCODE = 13;
-// var ESC_KEYCODE = 27;
+var pinMainSize = 62;
+var pinMainArrow = 22;
+var pinMainHalfSize = pinMainSize / 2;
+var pinMainAll = pinMainSize + pinMainArrow;
 var map = document.querySelector('.map');
 var mapPins = map.querySelector('.map__pins');
 var pinTemplate = document.querySelector('template').content.querySelector('.map__pin'); // нашли шаблон метки
@@ -77,16 +80,13 @@ var fieldsets = adForm.querySelectorAll('fieldset');
 var resetButton = adForm.querySelector('.ad-form__reset');
 var mainPin = map.querySelector('.map__pin--main');
 var inputAddress = adForm.querySelector('#address');
-// var closeButton = document.querySelector('.popup__close');
-
 var mapCenterX = map.offsetWidth / 2; // определила центр
 var mapCenterY = map.offsetHeight / 2;
 
 mainPin.style.left = mapCenterX - (mainPin.offsetWidth / 2) + 'px'; // сместила главный пин
 mainPin.style.top = mapCenterY - (mainPin.offsetHeight / 2) + 'px';
 
-
-mainPin.addEventListener('mouseup', mainPinClick); // активация страницы
+mainPin.addEventListener('mousedown', mainPinClick); // активация страницы
 mainPin.addEventListener('keydown', function (evt) {
   if (evt.keyCode === ENTER_KEYCODE) {
     mainPinClick();
@@ -95,7 +95,7 @@ mainPin.addEventListener('keydown', function (evt) {
 
 // определение координат главного пина
 function getCoordinates() {
-  inputAddress.value = parseInt(mainPin.style.left, 10) + ', ' + parseInt(mainPin.style.top, 10);
+  inputAddress.value = parseInt(mainPin.style.left + pinMainHalfSize, 10) + ', ' + parseInt(mainPin.style.top + pinMainAll, 10);
 }
 
 // функция генерации случайного элемента массива
@@ -127,8 +127,10 @@ function getRandomLengthArray(array, minSize) {
 
 // Координаты меток
 function createCoords() {
-  var locationX = getRandomInteger(minLocationX, maxLocationX);
-  var locationY = getRandomInteger(minLocationY, maxLocationY);
+  // var locationX = getRandomInteger(MIN_POSITION_X, MAX_POSITION_X);
+  var locationX = getRandomInteger(MIN_POSITION_X, MAX_POSITION_X);
+  var locationY = getRandomInteger(MIN_POSITION_Y, MAX_POSITION_Y);
+
 
   return {x: locationX, y: locationY};
 }
@@ -183,6 +185,7 @@ function createOffers() {
 function createPinNode(pinObject) {
   var pinNode = pinTemplate.cloneNode(true);
   pinNode.style.left = pinObject.location.x - PIN_WIDTH / 2 + 'px';
+  // pinNode.style.left = pinObject.location.x + 'px';
   pinNode.style.top = pinObject.location.y - PIN_HEIGHT + 'px';
   pinNode.querySelector('img').src = pinObject.author.avatar;
   pinNode.querySelector('img').alt = pinObject.offer.title;
@@ -244,8 +247,9 @@ function mainPinClick() {
   fieldsets.forEach(function (item) {
     item.disabled = false;
   });
-  mainPin.removeEventListener('mouseup', mainPinClick);
+  mainPin.removeEventListener('mousedown', mainPinClick);
   mainPin.removeEventListener('keydown', mainPinClick);
+  mainPin.removeEventListener('mouseup', mainPinClick);
 }
 
 
@@ -259,53 +263,28 @@ function closeCards() {
   }
 }
 
-// var closeButton = document.querySelector('.popup__close');
-// closeButton.addEventListener('keydown', function (evt) {
-//   if (evt.keyCode === ESC_KEYCODE) {
-//     closeCards();
-//   }
-// });
 
 function removePins() {
   var pinsArr = map.querySelectorAll('.map__pin:not(.map__pin--main)');
 
   for (var i = 0; i < pinsArr.length; i++) {
     pinsArr[i].remove();
-    // mapPins.removeChild(pinsArr[i]);
   }
 }
 
-// function resetPage() {
-//   removePins();
-//   closeCards();
-//   adForm.reset();
-//   getCoordinates();
-// }
-
-
-// // Вовзращает неактивное состяние
-// function disablePage() {
-//   map.classList.add('map--faded');
-//   adForm.classList.add('ad-form--disabled');
-//   resetPage();
-//   toggleDisabledAttr(fieldsets, true);
-// }
-
-// function resetForm() {
-//   disablePage();
-// }
 
 function resetPage() {
   closeCards();
   removePins();
   adForm.reset();
+  mainPin.style.left = mapCenterX - (mainPin.offsetWidth / 2) + 'px'; // сместила главный пин
+  mainPin.style.top = mapCenterY - (mainPin.offsetHeight / 2) + 'px';
   getCoordinates();
   map.classList.add('map--faded');
   fieldsets.forEach(function (item) {
     item.disabled = true;
   });
   adForm.classList.add('ad-form--disabled');
-  // resetButton.removeEventListener('click', resetPage);
   mainPin.addEventListener('mouseup', mainPinClick); // активация страницы
   mainPin.addEventListener('keydown', function (evt) {
     if (evt.keyCode === ENTER_KEYCODE) {
@@ -317,22 +296,6 @@ function resetPage() {
 
 resetButton.addEventListener('click', resetPage);
 
-// // // закрытие карточки // не работает
-// var closeCard = function () {
-//   card.classList.add('hidden');
-//   document.removeEventListener('keydown', onPopupEscPress);
-// };
-// var onPopupEscPress = function (evt) {
-//   if (evt.keyCode === ESC_KEYCODE) {
-//     closeCard();
-//   }
-// };
-// // closeButton.addEventListener('click', closeCard);
-// closeButton.addEventListener('keydown', function (evt) {
-//   if (evt.keyCode === ESC_KEYCODE) {
-//     closeCard();
-//   }
-// });
 
 // ---------------------module4-task2-------------------------
 var timeInField = adForm.querySelector('#timein');
@@ -341,7 +304,6 @@ var accommodationType = adForm.querySelector('#type');
 var priceField = adForm.querySelector('#price');
 var roomNumberField = adForm.querySelector('#room_number');
 var capacityField = adForm.querySelector('#capacity');
-// var descriptionField = adForm.querySelector('#description');
 
 function checkRoomGuests() {
   if ((roomNumberField.value === '1') && (capacityField.value !== '1')) {
@@ -416,13 +378,83 @@ roomNumberField.addEventListener('change', checkRoomGuests);
 timeInField.addEventListener('change', syncTimeIn);
 timeOutField.addEventListener('change', syncTimeOut);
 
+// --------------------------module5-task1------------------------------
 
-// ---------------BACKLOG-----------------
-// escape
-// массив с фотками
-// ограничения по гостям
-// сбрасивание страницы после отправки формы
-//
-//
+var mainPinHandler = map.querySelector('.map__pin--main');
+
+var dragLimit = {
+  x: {
+    min: 0,
+    max: map.clientWidth - pinMainSize
+  },
+  y: {
+    min: MIN_POSITION_Y - pinMainAll,
+    max: MAX_POSITION_Y - pinMainAll
+  }
+};
+
+mainPinHandler.addEventListener('mousedown', function (evt) {
+
+  evt.preventDefault();
+
+  // запомним координаты начальные
+  var startCoords = {
+    x: evt.clientX,
+    y: evt.clientY
+  };
+
+  // функция перемещения
+  function onMouseMove(moveEvt) {
+    moveEvt.preventDefault();
+
+    // смещение
+    var shift = {
+      x: startCoords.x - moveEvt.clientX,
+      y: startCoords.y - moveEvt.clientY
+    };
+
+    startCoords = {
+      x: moveEvt.clientX,
+      y: moveEvt.clientY
+    };
+
+    var left = mainPin.offsetLeft - shift.x;
+    if (left > dragLimit.x.max) {
+      left = dragLimit.x.max;
+    } else if (left <= dragLimit.x.min) {
+      left = dragLimit.x.min;
+    }
+
+    var top = mainPin.offsetTop - shift.y;
+    if (top > dragLimit.y.max) {
+      top = dragLimit.y.max;
+    } else if (top <= dragLimit.y.min) {
+      top = dragLimit.y.min;
+    }
+
+    var newCoordsX = left + pinMainHalfSize;
+    var newCoordsY = top + pinMainAll;
+
+    mainPin.style.top = top + 'px';
+    mainPin.style.left = left + 'px';
+
+    inputAddress.value = newCoordsX + ',' + newCoordsY;
+  }
+
+  var onMouseUp = function (upEvt) {
+    upEvt.preventDefault();
+
+    mapPins.removeEventListener('mousemove', onMouseMove);
+    mapPins.removeEventListener('mouseup', onMouseUp);
+
+  };
+
+  mapPins.addEventListener('mousemove', onMouseMove);
+  mapPins.addEventListener('mouseup', onMouseUp);
+});
+
+// ------------------BACKLOG----------------------
+// фотки переделать
+// пины адаптировать
 //
 //
