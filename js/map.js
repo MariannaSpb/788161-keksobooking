@@ -55,10 +55,8 @@ var NUMBER_ROOMS = 8;
 var offers = [];
 var MAX_POSITION_Y = 630;
 var MIN_POSITION_Y = 130;
-var minCoordsX = 0;
-var maxCoordsX = document.querySelector('.map__pins').offsetWidth;
-// var MIN_POSITION_X = 300;
-// var MAX_POSITION_X = 900;
+var MIN_POSITION_X = 0;
+var MAX_POSITION_X = document.querySelector('.map__pins').clientWidth;
 var PIN_WIDTH = 50;
 var PIN_HEIGHT = 70;
 var ENTER_KEYCODE = 13;
@@ -130,7 +128,7 @@ function getRandomLengthArray(array, minSize) {
 // Координаты меток
 function createCoords() {
   // var locationX = getRandomInteger(MIN_POSITION_X, MAX_POSITION_X);
-  var locationX = getRandomInteger(minCoordsX, maxCoordsX);
+  var locationX = getRandomInteger(MIN_POSITION_X, MAX_POSITION_X);
   var locationY = getRandomInteger(MIN_POSITION_Y, MAX_POSITION_Y);
 
 
@@ -384,9 +382,21 @@ timeOutField.addEventListener('change', syncTimeOut);
 
 var mainPinHandler = map.querySelector('.map__pin--main');
 
+var dragLimit = {
+  x: {
+    min: 0,
+    max: map.clientWidth - pinMainSize
+  },
+  y: {
+    min: MIN_POSITION_Y - pinMainAll,
+    max: MAX_POSITION_Y - pinMainAll
+  }
+};
+
 mainPinHandler.addEventListener('mousedown', function (evt) {
 
   evt.preventDefault();
+
   // запомним координаты начальные
   var startCoords = {
     x: evt.clientX,
@@ -396,28 +406,47 @@ mainPinHandler.addEventListener('mousedown', function (evt) {
   // функция перемещения
   function onMouseMove(moveEvt) {
     moveEvt.preventDefault();
+
     // смещение
     var shift = {
       x: startCoords.x - moveEvt.clientX,
       y: startCoords.y - moveEvt.clientY
     };
 
-    var pinLeft = evt.clientX - shift.x;
-    var pinTop = evt.clientY - shift.y;
+    startCoords = {
+      x: moveEvt.clientX,
+      y: moveEvt.clientY
+    };
 
-    // переопределяю
-    if (pinTop > MIN_POSITION_Y && pinTop < MAX_POSITION_Y && pinLeft > (map.offsetLeft + pinMainHalfSize) && pinLeft < (map.offsetLeft + map.clientWidth - pinMainHalfSize)) {
-      mainPin.style.left = (pinLeft - map.offsetLeft - pinMainHalfSize) + 'px';
-      mainPin.style.top = (pinTop - pinMainHalfSize) + 'px';
-      inputAddress.value = (pinLeft - map.offsetLeft) + ', ' + (pinTop + pinMainHalfSize + pinMainArrow);
+    var left = mainPin.offsetLeft - shift.x;
+    if (left > dragLimit.x.max) {
+      left = dragLimit.x.max;
+    } else if (left <= dragLimit.x.min) {
+      left = dragLimit.x.min;
     }
 
+    var top = mainPin.offsetTop - shift.y;
+    if (top > dragLimit.y.max) {
+      top = dragLimit.y.max;
+    } else if (top <= dragLimit.y.min) {
+      top = dragLimit.y.min;
+    }
+
+    var newCoordsX = left + pinMainHalfSize;
+    var newCoordsY = top + pinMainAll;
+
+    mainPin.style.top = top + 'px';
+    mainPin.style.left = left + 'px';
+
+    inputAddress.value = newCoordsX + ',' + newCoordsY;
   }
+
   var onMouseUp = function (upEvt) {
     upEvt.preventDefault();
 
     mapPins.removeEventListener('mousemove', onMouseMove);
     mapPins.removeEventListener('mouseup', onMouseUp);
+
   };
 
   mapPins.addEventListener('mousemove', onMouseMove);
