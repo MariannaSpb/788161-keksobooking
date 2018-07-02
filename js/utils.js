@@ -6,7 +6,7 @@
 
 
   // функция генерации случайного элемента массива
-  function getRandomElement(array) {
+  function getRandomElementArray(array) {
     var randomElement = Math.floor(Math.random() * array.length);
 
     return array[randomElement];
@@ -30,8 +30,7 @@
   }
 
   window.utils = {
-    // isEnterEvent: isEnterEvent,
-    getRandomElement: getRandomElement,
+    getRandomElementArray: getRandomElementArray,
     getRandomInteger: getRandomInteger,
     shuffleArray: shuffleArray,
     getRandomLengthArray: getRandomLengthArray,

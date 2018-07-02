@@ -2,107 +2,16 @@
 
 (function () {
 
-  var titles = [
-    'Большая уютная квартира',
-    'Маленькая неуютная квартира',
-    'Огромный прекрасный дворец',
-    'Маленький ужасный дворец',
-    'Красивый гостевой домик',
-    'Некрасивый негостеприимный домик',
-    'Уютное бунгало далеко от моря',
-    'Неуютное бунгало по колено в воде'
-  ];
-
-  var types = [
-    'palace',
-    'flat',
-    'house',
-    'bungalo'
-  ];
-
-  var checkinTimes = [
-    '12:00',
-    '13:00',
-    '14:00'
-  ];
-
-  var checkoutTimes = [
-    '12:00',
-    '13:00',
-    '14:00'
-  ];
-
-  var features = [
-    'wifi',
-    'dishwasher',
-    'parking',
-    'washer',
-    'elevator',
-    'conditioner'
-  ];
-
-  var photos = [
-    'http://o0.github.io/assets/images/tokyo/hotel1.jpg',
-    'http://o0.github.io/assets/images/tokyo/hotel2.jpg',
-    'http://o0.github.io/assets/images/tokyo/hotel3.jpg'
-  ];
-  var houseType = {
-    'palace': 'Дворец',
-    'flat': 'Квартира',
-    'house': 'Дом',
-    'bungalo': 'Бунгало',
-  };
-  var minPrice = 1000;
-  var maxPrice = 1000000;
-  var minRooms = 1;
-  var maxRooms = 5;
-  var minGuests = 1;
-  var maxGuests = 10;
-
-  var NUMBER_ROOMS = 8;
-  var offers = [];
+  // var NUMBER_ROOMS = 8;
+  // var offers = [];
   var mapCardTemplate = document.querySelector('template').content.querySelector('.map__card');
-
-  function getHouseType(type) {
-    return houseType[type];
-  }
-
-
-  // создаем массив объяв
-
-  function createOffer(id) {
-    var coords = window.map.createCoords();
-
-    return {
-      author: {
-        avatar: 'img/avatars/user0' + (id) + '.png'
-      },
-      offer: {
-        title: window.utils.getRandomElement(titles),
-        address: coords.x + ', ' + coords.y,
-        price: window.utils.getRandomInteger(minPrice, maxPrice),
-        type: window.utils.getRandomElement(types),
-        rooms: window.utils.getRandomInteger(minRooms, maxRooms),
-        guests: window.utils.getRandomInteger(minGuests, maxGuests),
-        checkin: window.utils.getRandomElement(checkinTimes),
-        checkout: window.utils.getRandomElement(checkoutTimes),
-        features: window.utils.getRandomLengthArray(features, 1),
-        description: '',
-        photos: window.utils.shuffleArray(photos),
-      },
-      location: {
-        x: coords.x,
-        y: coords.y
-      }
-    };
-  }
 
   function renderMapCard(mapCard) {
     var mapCardElement = mapCardTemplate.cloneNode(true);
     mapCardElement.querySelector('.popup__title').textContent = mapCard.offer.title;
     mapCardElement.querySelector('.popup__text--address').textContent = mapCard.offer.address;
     mapCardElement.querySelector('.popup__text--price').textContent = mapCard.offer.price + '₽/ночь';
-    mapCardElement.querySelector('.popup__type').textContent = getHouseType(mapCard.offer.type);
+    mapCardElement.querySelector('.popup__type').textContent = window.data.getHouseType(mapCard.offer.type);
     mapCardElement.querySelector('.popup__text--capacity').textContent = mapCard.offer.rooms + ' комнаты для ' + mapCard.offer.guests + ' гостей';
     mapCardElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + mapCard.offer.checkin + ', выезд до ' + mapCard.offer.checkout;
     mapCardElement.querySelector('.popup__features').innerHTML = '';
@@ -140,23 +49,23 @@
     }
   }
 
-  function createOffers() {
-    var newOffers = [];
+  // function createOffers() {
+  //   var newOffers = [];
 
-    for (var id = 1; id <= NUMBER_ROOMS; id++) {
-      var offer = createOffer(id);
-      newOffers.push(offer);
-    }
+  //   for (var id = 1; id <= NUMBER_ROOMS; id++) {
+  //     var offer = createOffer(id);
+  //     newOffers.push(offer);
+  //   }
 
-    return newOffers;
-  }
+  //   return newOffers;
+  // }
 
 
   window.card = {
     renderMapCard: renderMapCard,
     closeCards: closeCards,
-    createOffers: createOffers,
-    offers: offers,
+    // createOffers: createOffers,
+    // offers: offers,
   };
 
 })();

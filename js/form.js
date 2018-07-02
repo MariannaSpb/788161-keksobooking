@@ -12,7 +12,18 @@
   var resetButton = adForm.querySelector('.ad-form__reset');
   var fieldsets = adForm.querySelectorAll('fieldset');
   var mainPin = map.querySelector('.map__pin--main');
+  var priceType = {
+    'bungalo': 0,
+    'flat': 1000,
+    'house': 5000,
+    'palace': 100000
+  };
+  function onHouseTypeChange() {
+    priceField.min = priceType[accommodationType.value];
+    priceField.placeholder = priceField.min;
+  }
 
+  accommodationType.addEventListener('change', onHouseTypeChange);
 
   // время заезда  неравно времени выезда
 
@@ -25,29 +36,7 @@
   }
 
 
-  function changeAccommodationPrice() {
-    switch (accommodationType.value) {
-      case 'bungalo':
-        priceField.placeholder = 0;
-        priceField.min = 0;
-        break;
-      case 'flat':
-        priceField.placeholder = 1000;
-        priceField.min = 1000;
-        break;
-      case 'house':
-        priceField.placeholder = 5000;
-        priceField.min = 5000;
-        break;
-      case 'palace':
-        priceField.placeholder = 10000;
-        priceField.min = 10000;
-        break;
-    }
-  }
-
-
-  function checkRoomGuests() { //
+  function checkRoomGuests() {
     if ((roomNumberField.value === '1') && (capacityField.value !== '1')) {
       capacityField.setCustomValidity('Одноместный номер рассчитан только на одного гостя');
     } else if ((roomNumberField.value === '2') && (capacityField.value !== '2' && capacityField.value !== '1')) {
@@ -61,11 +50,13 @@
     }
   }
 
-  accommodationType.addEventListener('change', changeAccommodationPrice);
+
+  accommodationType.addEventListener('change', onHouseTypeChange);
   capacityField.addEventListener('change', checkRoomGuests);
   roomNumberField.addEventListener('change', checkRoomGuests);
   timeInField.addEventListener('change', syncTimeIn);
   timeOutField.addEventListener('change', syncTimeOut);
+  // changeAccommodationPrice
 
   function resetPage() {
     window.card.closeCards();
@@ -83,7 +74,6 @@
     mainPin.addEventListener('keydown', onPopupEnterPress);
   }
 
-  mainPin.removeEventListener('keydown', onPopupEnterPress);
   // функция нажатия на гл пин enterom
   function onPopupEnterPress(evt) {
     if (evt.keyCode === window.utils.ENTER_KEYCODE) {
@@ -94,16 +84,16 @@
   resetButton.addEventListener('click', resetPage);
 
   // Функции для подсвечиваня невалидвой формы
-  var isInvalid = function (input) {
+  function isInvalid(input) {
     if (input.checkValidity() === false) {
       input.style.boxShadow = '0 0 2px 2px #ff6547';
     }
-  };
-  var isValid = function (input) {
+  }
+  function isValid(input) {
     if (input.checkValidity() === true) {
       input.style.boxShadow = 'none';
     }
-  };
+  }
 
   adForm.querySelector('.ad-form__submit').addEventListener('click', function () {
     isInvalid(adForm.querySelector('#title'));

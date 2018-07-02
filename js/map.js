@@ -44,10 +44,10 @@
 
   // активация странички
   function mainPinClick() {
-    window.card.offers = window.card.createOffers();
+    window.data.offers = window.data.createOffers();
     var pinFragment = document.createDocumentFragment(); // отрисуйум сгенерированные DOM-элементы в блок .map__pins. Используйте DocumentFragment.
-    for (var i = 0; i < window.card.offers.length; i++) {
-      var pinNode = window.pin.createPinNode(window.card.offers[i]);
+    for (var i = 0; i < window.data.offers.length; i++) {
+      var pinNode = window.pin.createPinNode(window.data.offers[i]);
       pinFragment.appendChild(pinNode);
     }
     map.classList.remove('map--faded'); // снять блок с карты
@@ -62,7 +62,6 @@
     mainPin.removeEventListener('mouseup', mainPinClick);
     mainPin.removeEventListener('keydown', window.form.onPopupEnterPress);
   }
-
 
 
   var mainPinHandler = map.querySelector('.map__pin--main');
