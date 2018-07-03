@@ -110,7 +110,6 @@
     createOffers: createOffers,
     getHouseType: getHouseType,
     offers: offers,
-    createOffer: createOffer
   };
 
 })();
