@@ -24,8 +24,10 @@
       popupParent.appendChild(window.card.renderMapCard(pinObject));
     });
     return pinNode;
+    // function onLoad(ads) {
+    //   window.map.insertPins(ads);
+    // }
   }
-
 
   function removePins() {
     var pinsArr = window.map.map.querySelectorAll('.map__pin:not(.map__pin--main)');

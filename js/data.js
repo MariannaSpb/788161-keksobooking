@@ -60,7 +60,6 @@
 
   var NUMBER_ROOMS = 8;
   var offers = [];
-  // var mapCardTemplate = document.querySelector('template').content.querySelector('.map__card');
 
   function getHouseType(type) {
     return houseType[type];

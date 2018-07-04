@@ -29,6 +29,7 @@
     }
   });
 
+
   // определение координат главного пина
   function getCoordinates() {
     inputAddress.value = parseInt(mainPin.style.left + pinMainHalfSize, 10) + ', ' + parseInt(mainPin.style.top + pinMainAll, 10);
@@ -41,22 +42,27 @@
 
     return {x: locationX, y: locationY};
   }
-
-  // активация странички
-  function mainPinClick() {
-    window.data.offers = window.data.createOffers();
+  function insertPins(offers) {
     var pinFragment = document.createDocumentFragment(); // отрисуйум сгенерированные DOM-элементы в блок .map__pins. Используйте DocumentFragment.
     for (var i = 0; i < window.data.offers.length; i++) {
       var pinNode = window.pin.createPinNode(window.data.offers[i]);
       pinFragment.appendChild(pinNode);
     }
+    mapPins.appendChild(pinFragment);
+  }
+
+  // активация странички
+  function mainPinClick() {
+    window.data.offers = window.data.createOffers();
+    insertPins();
     map.classList.remove('map--faded'); // снять блок с карты
     adForm.classList.remove('ad-form--disabled'); // снять блок с полей формы
     getCoordinates();
-    mapPins.appendChild(pinFragment);
+    window.backend.load(window.form.onLoad, window.form.onError);
     window.form.fieldsets.forEach(function (item) {
       item.disabled = false;
     });
+    mainPin.removeEventListener('click', mainPinClick);
     mainPin.removeEventListener('mousedown', mainPinClick);
     mainPin.removeEventListener('keydown', mainPinClick);
     mainPin.removeEventListener('mouseup', mainPinClick);
@@ -144,8 +150,8 @@
     map: map,
     getCoordinates: getCoordinates,
     mapCenterX: mapCenterX,
-    mapCenterY: mapCenterY
-
+    mapCenterY: mapCenterY,
+    insertPins: insertPins,
   };
 
 })();

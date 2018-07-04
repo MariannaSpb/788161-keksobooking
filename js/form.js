@@ -12,6 +12,8 @@
   var resetButton = adForm.querySelector('.ad-form__reset');
   var fieldsets = adForm.querySelectorAll('fieldset');
   var mainPin = map.querySelector('.map__pin--main');
+  var successPopup = document.querySelector('.success'); // НАЗВАНИЕ???????
+  // var submitButton = adForm.querySelector('.ad-form__submit');
   var priceType = {
     'bungalo': 0,
     'flat': 1000,
@@ -56,7 +58,6 @@
   roomNumberField.addEventListener('change', checkRoomGuests);
   timeInField.addEventListener('change', syncTimeIn);
   timeOutField.addEventListener('change', syncTimeOut);
-  // changeAccommodationPrice
 
   function resetPage() {
     window.card.closeCards();
@@ -102,8 +103,59 @@
     isValid(adForm.querySelector('#price'));
   });
 
+  // создание элемента с сообщением об ошибке ПЕРЕДЕЛАЙ
+  // элемент с текстом ошибки
+  function onError(errorMessage) {
+    var errorMessageElement = document.createElement('div');
+    errorMessageElement.style = 'z-index: 100; margin: 5px auto; text-align: center; background-color: red';
+    errorMessageElement.style.position = 'absolute';
+    errorMessageElement.style.left = 0;
+    errorMessageElement.style.right = 0;
+    errorMessageElement.style.fontSize = '30px';
+
+    errorMessageElement.textContent = errorMessage;
+    document.body.insertAdjacentElement('afterbegin', errorMessageElement); // добавляем ноду в DOM
+    setTimeout(function () {
+      errorMessageElement.classList.add('hidden');
+    }, 2000);
+  }
+
+
+  function onPopupEscPress(evt) {
+    if (evt.keyCode === window.utils.ESC_KEYCODE) {
+      closePopup();
+    }
+  }
+  // успешная отправка формы
+  function onLoad() {
+    resetPage();
+    mainPin.addEventListener('mousedown', window.map.mainPinClick);
+    successPopup.classList.remove('hidden');
+    document.addEventListener('keydown', onPopupEscPress);
+    successPopup.addEventListener('click', closePopup);
+  }
+
+  // закрыть сообщение об успешной отправке
+  function closePopup() {
+    successPopup.classList.add('hidden');
+    document.removeEventListener('click', closePopup());
+    document.removeEventListener('keydown', closePopup());
+  }
+  successPopup.addEventListener('click', closePopup);
+
+  // Доработайте обработчик отправки формы так, чтобы он отменял действие формы по умолчанию и отправлял данные формы
+
+  adForm.addEventListener('submit', function (evt) {
+    window.backend.upload(new FormData(adForm), onLoad, onError);
+    evt.preventDefault();
+  });
+
+
   window.form = {
     fieldsets: fieldsets,
-    onPopupEnterPress: onPopupEnterPress
+    onPopupEnterPress: onPopupEnterPress,
+    onError: onError,
+    resetPage: resetPage,
+    onLoad: onLoad
   };
 })();
