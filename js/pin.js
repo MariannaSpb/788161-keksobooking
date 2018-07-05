@@ -2,8 +2,8 @@
 
 (function () {
 
-  var PIN_WIDTH = 50; //
-  var PIN_HEIGHT = 70;//
+  var PIN_WIDTH = 50;
+  var PIN_HEIGHT = 70;
   var popupParent = document.querySelector('.map__filters-container');
   var pinTemplate = document.querySelector('template').content.querySelector('.map__pin');
 

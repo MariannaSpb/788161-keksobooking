@@ -38,13 +38,23 @@
 
   // активация странички
   function mainPinClick() {
-    window.data.offers = window.data.createOffers();
-    var pinFragment = document.createDocumentFragment(); // отрисуйум сгенерированные DOM-элементы в блок .map__pins. Используйте DocumentFragment.
-    for (var i = 0; i < window.data.offers.length; i++) {
-      var pinNode = window.pin.createPinNode(window.data.offers[i]);
-      pinFragment.appendChild(pinNode);
-    }
-    mapPins.appendChild(pinFragment);
+    // window.data.offers = window.data.createOffers();
+    // var pinFragment = document.createDocumentFragment(); // отрисуйум сгенерированные DOM-элементы в блок .map__pins. Используйте DocumentFragment.
+    // for (var i = 0; i < window.data.offers.length; i++) {
+    //   var pinNode = window.pin.createPinNode(window.data.offers[i]);
+    //   pinFragment.appendChild(pinNode);
+    // }
+    // mapPins.appendChild(pinFragment);
+    window.backend.load(function (pins) {
+      // Создаем фрагмент, добавляем в него пины
+      var pinsFragment = document.createDocumentFragment();
+      for (var i = 0; i < pins.length; i++) {
+        var pinNode = window.pin.createPinNode(pins[i]);
+        pinsFragment.appendChild(pinNode);
+      }
+      var pinsPlace = document.querySelector('.map__pins');
+      pinsPlace.appendChild(pinsFragment);
+    }, window.form.onError);
     map.classList.remove('map--faded'); // снять блок с карты
     adForm.classList.remove('ad-form--disabled'); // снять блок с полей формы
     getCoordinates();

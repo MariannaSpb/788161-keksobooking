@@ -12,9 +12,7 @@
   var resetButton = adForm.querySelector('.ad-form__reset');
   var fieldsets = adForm.querySelectorAll('fieldset');
   var mainPin = map.querySelector('.map__pin--main');
-  var successPopup = document.querySelector('.success'); // НАЗВАНИЕ???????
-
-  // var submitButton = adForm.querySelector('.ad-form__submit');
+  var successPopup = document.querySelector('.success');
 
   var priceType = {
     'bungalo': 0,
@@ -111,22 +109,6 @@
     isValid(adForm.querySelector('#price'));
   });
 
-  // создание элемента с сообщением об ошибке
-
-  // function onError(errorMessage) {
-  //   var errorMessageElement = document.createElement('div');
-  //   errorMessageElement.style = 'z-index: 100; margin: 5px auto; text-align: center; background-color: red';
-  //   errorMessageElement.style.position = 'absolute';
-  //   errorMessageElement.style.left = 0;
-  //   errorMessageElement.style.right = 0;
-  //   errorMessageElement.style.fontSize = '30px';
-  //   errorMessageElement.textContent = errorMessage;
-  //   document.body.insertAdjacentElement('afterbegin', errorMessageElement); // добавляем ноду в DOM
-  //   errorMessageElement.classList.add('error');
-
-  // }
-
-
   // успешная отправка формы
   function onSuccessClick() {
     resetPage();
@@ -147,10 +129,6 @@
 
   // Доработайте обработчик отправки формы так, чтобы он отменял действие формы по умолчанию и отправлял данные формы
 
-  adForm.addEventListener('submit', function (evt) {
-    window.backend.upload(new FormData(adForm), onSuccessClick, onError);
-    evt.preventDefault();
-  });
 
   function onError(errorMessage) {
     var errorMessageElement = document.createElement('div');
@@ -163,6 +141,12 @@
     document.body.insertAdjacentElement('afterbegin', errorMessageElement); // добавляем ноду в DOM
     errorMessageElement.classList.add('hidden');
   }
+
+  // Доработайте обработчик отправки формы так, чтобы он отменял действие формы по умолчанию и отправлял данные формы
+  adForm.addEventListener('submit', function (evt) {
+    window.backend.upload(new FormData(adForm), onSuccessClick, onError);
+    evt.preventDefault();
+  });
 
 
   window.form = {
