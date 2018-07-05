@@ -2,8 +2,17 @@
 
 (function () {
 
-  // var NUMBER_ROOMS = 8;
-  // var offers = [];
+  var houseType = {
+    'palace': 'Дворец',
+    'flat': 'Квартира',
+    'house': 'Дом',
+    'bungalo': 'Бунгало',
+  };
+  function getHouseType(type) {
+    return houseType[type];
+  }
+
+
   var mapCardTemplate = document.querySelector('template').content.querySelector('.map__card');
 
   function renderMapCard(mapCard) {
@@ -11,7 +20,7 @@
     mapCardElement.querySelector('.popup__title').textContent = mapCard.offer.title;
     mapCardElement.querySelector('.popup__text--address').textContent = mapCard.offer.address;
     mapCardElement.querySelector('.popup__text--price').textContent = mapCard.offer.price + '₽/ночь';
-    mapCardElement.querySelector('.popup__type').textContent = window.data.getHouseType(mapCard.offer.type);
+    mapCardElement.querySelector('.popup__type').textContent = getHouseType(mapCard.offer.type);
     mapCardElement.querySelector('.popup__text--capacity').textContent = mapCard.offer.rooms + ' комнаты для ' + mapCard.offer.guests + ' гостей';
     mapCardElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + mapCard.offer.checkin + ', выезд до ' + mapCard.offer.checkout;
     mapCardElement.querySelector('.popup__features').innerHTML = '';
@@ -49,23 +58,13 @@
     }
   }
 
-  // function createOffers() {
-  //   var newOffers = [];
-
-  //   for (var id = 1; id <= NUMBER_ROOMS; id++) {
-  //     var offer = createOffer(id);
-  //     newOffers.push(offer);
-  //   }
-
-  //   return newOffers;
-  // }
-
 
   window.card = {
     renderMapCard: renderMapCard,
     closeCards: closeCards,
-    // createOffers: createOffers,
-    // offers: offers,
+    getHouseType: getHouseType
+
+
   };
 
 })();

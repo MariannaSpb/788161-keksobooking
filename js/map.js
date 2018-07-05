@@ -4,8 +4,8 @@
 
   var MAX_POSITION_Y = 630;
   var MIN_POSITION_Y = 130;
-  var MIN_POSITION_X = 0;
-  var MAX_POSITION_X = document.querySelector('.map__pins').clientWidth;
+  // var MIN_POSITION_X = 0;
+  // var MAX_POSITION_X = document.querySelector('.map__pins').clientWidth;
   var ENTER_KEYCODE = 13;
   var pinMainSize = 62;
   var pinMainArrow = 22;
@@ -18,6 +18,7 @@
   var inputAddress = adForm.querySelector('#address');
   var mapCenterX = map.offsetWidth / 2; // определила центр
   var mapCenterY = map.offsetHeight / 2;
+
 
   mainPin.style.left = mapCenterX - (mainPin.offsetWidth / 2) + 'px'; // сместила главный пин
   mainPin.style.top = mapCenterY - (mainPin.offsetHeight / 2) + 'px';
@@ -35,30 +36,18 @@
     inputAddress.value = parseInt(mainPin.style.left + pinMainHalfSize, 10) + ', ' + parseInt(mainPin.style.top + pinMainAll, 10);
   }
 
-  // Координаты меток
-  function createCoords() {
-    var locationX = window.utils.getRandomInteger(MIN_POSITION_X, MAX_POSITION_X);
-    var locationY = window.utils.getRandomInteger(MIN_POSITION_Y, MAX_POSITION_Y);
-
-    return {x: locationX, y: locationY};
-  }
-  function insertPins(offers) {
+  // активация странички
+  function mainPinClick() {
+    window.data.offers = window.data.createOffers();
     var pinFragment = document.createDocumentFragment(); // отрисуйум сгенерированные DOM-элементы в блок .map__pins. Используйте DocumentFragment.
     for (var i = 0; i < window.data.offers.length; i++) {
       var pinNode = window.pin.createPinNode(window.data.offers[i]);
       pinFragment.appendChild(pinNode);
     }
     mapPins.appendChild(pinFragment);
-  }
-
-  // активация странички
-  function mainPinClick() {
-    window.data.offers = window.data.createOffers();
-    insertPins();
     map.classList.remove('map--faded'); // снять блок с карты
     adForm.classList.remove('ad-form--disabled'); // снять блок с полей формы
     getCoordinates();
-    window.backend.load(window.form.onLoad, window.form.onError);
     window.form.fieldsets.forEach(function (item) {
       item.disabled = false;
     });
@@ -67,8 +56,8 @@
     mainPin.removeEventListener('keydown', mainPinClick);
     mainPin.removeEventListener('mouseup', mainPinClick);
     mainPin.removeEventListener('keydown', window.form.onPopupEnterPress);
-  }
 
+  }
 
   var mainPinHandler = map.querySelector('.map__pin--main');
 
@@ -134,6 +123,7 @@
     var onMouseUp = function (upEvt) {
       upEvt.preventDefault();
 
+
       mapPins.removeEventListener('mousemove', onMouseMove);
       mapPins.removeEventListener('mouseup', onMouseUp);
 
@@ -143,15 +133,14 @@
     mapPins.addEventListener('mouseup', onMouseUp);
   });
 
-
   window.map = {
-    createCoords: createCoords,
+    // createCoords: createCoords,
     mainPinClick: mainPinClick,
     map: map,
     getCoordinates: getCoordinates,
     mapCenterX: mapCenterX,
     mapCenterY: mapCenterY,
-    insertPins: insertPins,
+
   };
 
 })();

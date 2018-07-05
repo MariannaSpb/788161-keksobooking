@@ -5,7 +5,7 @@
   var STATUS_SUCCESS = 200;
   var TIMEOUT = 10000;
   // Функция получения данных с сервера
-  function load(onLoad, onError) {
+  var load = function (onLoad, onError) {
     var URL = 'https://js.dump.academy/keksobooking/data';
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
@@ -28,10 +28,10 @@
 
     xhr.open('GET', URL); // настраивает запрос на получение данных с сервера
     xhr.send(); // открывем соединение
-  }
+  };
 
   // Функция для отправки данных на сервер
-  function upload(data, onLoad, onError) {
+  var upload = function (data, onLoad, onError) {
     var URL = 'https://js.dump.academy/keksobooking';
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
@@ -56,11 +56,11 @@
 
     xhr.open('POST', URL); // настраивает запрос передачи данных на сервер
     xhr.send(data);
-  }
+  };
 
   window.backend = {
     load: load,
-    upload: upload
+    upload: upload,
   };
 
 })();

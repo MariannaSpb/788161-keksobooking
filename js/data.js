@@ -45,12 +45,16 @@
     'http://o0.github.io/assets/images/tokyo/hotel2.jpg',
     'http://o0.github.io/assets/images/tokyo/hotel3.jpg'
   ];
-  var houseType = {
-    'palace': 'Дворец',
-    'flat': 'Квартира',
-    'house': 'Дом',
-    'bungalo': 'Бунгало',
-  };
+  // var houseType = {
+  //   'palace': 'Дворец',
+  //   'flat': 'Квартира',
+  //   'house': 'Дом',
+  //   'bungalo': 'Бунгало',
+  // };
+  var MAX_POSITION_Y = 630;
+  var MIN_POSITION_Y = 130;
+  var MIN_POSITION_X = 0;
+  var MAX_POSITION_X = document.querySelector('.map__pins').clientWidth;
   var minPrice = 1000;
   var maxPrice = 1000000;
   var minRooms = 1;
@@ -61,10 +65,13 @@
   var NUMBER_ROOMS = 8;
   var offers = [];
 
-  function getHouseType(type) {
-    return houseType[type];
-  }
+  // Координаты меток
+  function createCoords() {
+    var locationX = window.utils.getRandomInteger(MIN_POSITION_X, MAX_POSITION_X);
+    var locationY = window.utils.getRandomInteger(MIN_POSITION_Y, MAX_POSITION_Y);
 
+    return {x: locationX, y: locationY};
+  }
   function createOffers() {
     var newOffers = [];
 
@@ -75,11 +82,11 @@
 
     return newOffers;
   }
-
+  offers = createOffers();
   // создаем массив объяв
 
   function createOffer(id) {
-    var coords = window.map.createCoords();
+    var coords = createCoords();
 
     return {
       author: {
@@ -107,8 +114,9 @@
 
   window.data = {
     createOffers: createOffers,
-    getHouseType: getHouseType,
     offers: offers,
+    createCoords: createCoords
+
   };
 
 })();

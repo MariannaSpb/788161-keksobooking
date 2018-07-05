@@ -7,7 +7,6 @@
   var popupParent = document.querySelector('.map__filters-container');
   var pinTemplate = document.querySelector('template').content.querySelector('.map__pin');
 
-
   // создаем метку на основе шаблона
 
   function createPinNode(pinObject) {
@@ -24,10 +23,9 @@
       popupParent.appendChild(window.card.renderMapCard(pinObject));
     });
     return pinNode;
-    // function onLoad(ads) {
-    //   window.map.insertPins(ads);
-    // }
+
   }
+
 
   function removePins() {
     var pinsArr = window.map.map.querySelectorAll('.map__pin:not(.map__pin--main)');
@@ -39,7 +37,7 @@
 
   window.pin = {
     createPinNode: createPinNode,
-    removePins: removePins
+    removePins: removePins,
   };
 
 })();
