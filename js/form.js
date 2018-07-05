@@ -12,6 +12,8 @@
   var resetButton = adForm.querySelector('.ad-form__reset');
   var fieldsets = adForm.querySelectorAll('fieldset');
   var mainPin = map.querySelector('.map__pin--main');
+  var successPopup = document.querySelector('.success');
+
   var priceType = {
     'bungalo': 0,
     'flat': 1000,
@@ -56,7 +58,6 @@
   roomNumberField.addEventListener('change', checkRoomGuests);
   timeInField.addEventListener('change', syncTimeIn);
   timeOutField.addEventListener('change', syncTimeOut);
-  // changeAccommodationPrice
 
   function resetPage() {
     window.card.closeCards();
@@ -74,6 +75,8 @@
     mainPin.addEventListener('keydown', onPopupEnterPress);
   }
 
+  resetButton.addEventListener('click', resetPage);
+
   // функция нажатия на гл пин enterom
   function onPopupEnterPress(evt) {
     if (evt.keyCode === window.utils.ENTER_KEYCODE) {
@@ -81,7 +84,11 @@
     }
   }
 
-  resetButton.addEventListener('click', resetPage);
+  function onPopupEscPress(evt) {
+    if (evt.keyCode === window.utils.ESC_KEYCODE) {
+      closePopup();
+    }
+  }
 
   // Функции для подсвечиваня невалидвой формы
   function isInvalid(input) {
@@ -102,8 +109,51 @@
     isValid(adForm.querySelector('#price'));
   });
 
+  // успешная отправка формы
+  function onSuccessClick() {
+    resetPage();
+    successPopup.classList.remove('hidden');
+    successPopup.addEventListener('click', function () {
+      successPopup.classList.add('hidden');
+    });
+    document.addEventListener('keydown', onPopupEscPress);
+  }
+
+  // закрыть сообщение об успешной отправке
+  function closePopup() {
+    successPopup.classList.add('hidden');
+    // document.removeEventListener('click', closePopup());
+    document.removeEventListener('keydown', onPopupEscPress);
+  }
+  successPopup.addEventListener('click', closePopup);
+
+  // Доработайте обработчик отправки формы так, чтобы он отменял действие формы по умолчанию и отправлял данные формы
+
+
+  function onError(errorMessage) {
+    var errorMessageElement = document.createElement('div');
+    errorMessageElement.style = 'z-index: 100; margin: 5px auto; text-align: center; background-color: red';
+    errorMessageElement.style.position = 'absolute';
+    errorMessageElement.style.left = 0;
+    errorMessageElement.style.right = 0;
+    errorMessageElement.style.fontSize = '30px';
+    errorMessageElement.textContent = errorMessage;
+    document.body.insertAdjacentElement('afterbegin', errorMessageElement); // добавляем ноду в DOM
+    errorMessageElement.classList.add('hidden');
+  }
+
+  // Доработайте обработчик отправки формы так, чтобы он отменял действие формы по умолчанию и отправлял данные формы
+  adForm.addEventListener('submit', function (evt) {
+    window.backend.upload(new FormData(adForm), onSuccessClick, onError);
+    evt.preventDefault();
+  });
+
+
   window.form = {
     fieldsets: fieldsets,
-    onPopupEnterPress: onPopupEnterPress
+    onPopupEnterPress: onPopupEnterPress,
+    resetPage: resetPage,
+    onError: onError
+
   };
 })();
