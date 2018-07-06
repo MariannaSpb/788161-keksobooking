@@ -35,7 +35,7 @@
     shuffleArray: shuffleArray,
     getRandomLengthArray: getRandomLengthArray,
     ENTER_KEYCODE: ENTER_KEYCODE,
-    ESC_KEYCODE: ESC_KEYCODE
+    ESC_KEYCODE: ESC_KEYCODE,
 
   };
 })();
