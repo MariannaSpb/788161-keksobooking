@@ -38,16 +38,7 @@
 
   // активация странички
   function mainPinClick() {
-    window.backend.load(function (pins) {
-      // Создаем фрагмент, добавляем в него пины
-      var pinsFragment = document.createDocumentFragment();
-      for (var i = 0; i < pins.length; i++) {
-        var pinNode = window.pin.createPinNode(pins[i]);
-        pinsFragment.appendChild(pinNode);
-      }
-      var pinsPlace = document.querySelector('.map__pins');
-      pinsPlace.appendChild(pinsFragment);
-    }, window.form.onError);
+    window.backend.load(window.onSuccess, window.form.onError); // отрисовываем 5 пинов при активации
     map.classList.remove('map--faded'); // снять блок с карты
     adForm.classList.remove('ad-form--disabled'); // снять блок с полей формы
     getCoordinates();
@@ -137,7 +128,6 @@
   });
 
   window.map = {
-    // createCoords: createCoords,
     mainPinClick: mainPinClick,
     map: map,
     getCoordinates: getCoordinates,

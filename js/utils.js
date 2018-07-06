@@ -31,7 +31,8 @@
 
   var DEBOUNCE_INTERVAL = 500; // ms
 
-  window.debounce = function (callback) {
+  function debounce(callback) {
+ // window.debounce = function (callback) {
     var lastTimeout = null;
 
     return function () {
@@ -43,7 +44,7 @@
         callback.apply(null, args);
       }, DEBOUNCE_INTERVAL);
     };
-  };
+  }
 
   window.utils = {
     getRandomElementArray: getRandomElementArray,
@@ -51,7 +52,8 @@
     shuffleArray: shuffleArray,
     getRandomLengthArray: getRandomLengthArray,
     ENTER_KEYCODE: ENTER_KEYCODE,
-    ESC_KEYCODE: ESC_KEYCODE
+    ESC_KEYCODE: ESC_KEYCODE,
+    debounce: debounce
 
   };
 })();

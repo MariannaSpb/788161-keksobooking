@@ -4,6 +4,7 @@
 
   var PIN_WIDTH = 50;
   var PIN_HEIGHT = 70;
+  var MAX_AVAILABLE_PINS = 5;
   var popupParent = document.querySelector('.map__filters-container');
   var pinTemplate = document.querySelector('template').content.querySelector('.map__pin');
 
@@ -34,6 +35,15 @@
       pinsArr[i].remove();
     }
   }
+  window.render = function (pins) {
+    var pinsFragment = document.createDocumentFragment();
+    for (var i = 0; i < MAX_AVAILABLE_PINS; i++) {
+      var pin = createPinNode(pins[i]);
+      pinsFragment.appendChild(pin);
+    }
+    var pinsPlace = document.querySelector('.map__pins');
+    pinsPlace.appendChild(pinsFragment);
+  };
 
   window.pin = {
     createPinNode: createPinNode,
