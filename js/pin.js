@@ -49,21 +49,6 @@
   };
 
 
-
-
-
-
-
-
-  //   var pinsFragment = document.createDocumentFragment();
-  //   for (var i = 0; i < MAX_AVAILABLE_PINS; i++) {
-  //     var pin = createPinNode(pins[i]);
-  //     pinsFragment.appendChild(pin);
-  //   }
-  //   var pinsPlace = document.querySelector('.map__pins');
-  //   pinsPlace.appendChild(pinsFragment);
-  // };
-
   window.pin = {
     createPinNode: createPinNode,
     removePins: removePins,

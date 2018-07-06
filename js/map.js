@@ -15,7 +15,7 @@
   var mainPin = map.querySelector('.map__pin--main');
   var mapPins = map.querySelector('.map__pins');
   var adForm = document.querySelector('.ad-form');
-  var filterForm = document.querySelector('.map__filters');
+  // var filterForm = document.querySelector('.map__filters');
   var inputAddress = adForm.querySelector('#address');
   var mapCenterX = map.offsetWidth / 2; // определила центр
   var mapCenterY = map.offsetHeight / 2;
@@ -46,7 +46,7 @@
     window.form.fieldsets.forEach(function (item) {
       item.disabled = false;
     });
-   // filterForm.addEventListener('change', window.utils.debounce(window.filter.updatePins));
+    // filterForm.addEventListener('change', window.utils.debounce(window.filter.updatePins));
     mainPin.removeEventListener('click', mainPinClick);
     mainPin.removeEventListener('mousedown', mainPinClick);
     mainPin.removeEventListener('keydown', mainPinClick);
