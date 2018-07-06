@@ -29,6 +29,22 @@
     return shuffleArray(array).slice(0, getRandomInteger(minSize, array.length));
   }
 
+  var DEBOUNCE_INTERVAL = 500; // ms
+
+  window.debounce = function (callback) {
+    var lastTimeout = null;
+
+    return function () {
+      var args = arguments;
+      if (lastTimeout) {
+        window.clearTimeout(lastTimeout);
+      }
+      lastTimeout = window.setTimeout(function () {
+        callback.apply(null, args);
+      }, DEBOUNCE_INTERVAL);
+    };
+  };
+
   window.utils = {
     getRandomElementArray: getRandomElementArray,
     getRandomInteger: getRandomInteger,

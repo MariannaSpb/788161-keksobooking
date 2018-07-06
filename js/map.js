@@ -38,13 +38,6 @@
 
   // активация странички
   function mainPinClick() {
-    // window.data.offers = window.data.createOffers();
-    // var pinFragment = document.createDocumentFragment(); // отрисуйум сгенерированные DOM-элементы в блок .map__pins. Используйте DocumentFragment.
-    // for (var i = 0; i < window.data.offers.length; i++) {
-    //   var pinNode = window.pin.createPinNode(window.data.offers[i]);
-    //   pinFragment.appendChild(pinNode);
-    // }
-    // mapPins.appendChild(pinFragment);
     window.backend.load(function (pins) {
       // Создаем фрагмент, добавляем в него пины
       var pinsFragment = document.createDocumentFragment();
