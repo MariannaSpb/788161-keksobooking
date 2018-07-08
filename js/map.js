@@ -4,8 +4,6 @@
 
   var MAX_POSITION_Y = 630;
   var MIN_POSITION_Y = 130;
-  // var MIN_POSITION_X = 0;
-  // var MAX_POSITION_X = document.querySelector('.map__pins').clientWidth;
   var ENTER_KEYCODE = 13;
   var pinMainSize = 62;
   var pinMainArrow = 22;
@@ -15,6 +13,7 @@
   var mainPin = map.querySelector('.map__pin--main');
   var mapPins = map.querySelector('.map__pins');
   var adForm = document.querySelector('.ad-form');
+  var filterForm = document.querySelector('.map__filters');
   var inputAddress = adForm.querySelector('#address');
   var mapCenterX = map.offsetWidth / 2; // определила центр
   var mapCenterY = map.offsetHeight / 2;
@@ -38,29 +37,14 @@
 
   // активация странички
   function mainPinClick() {
-    // window.data.offers = window.data.createOffers();
-    // var pinFragment = document.createDocumentFragment(); // отрисуйум сгенерированные DOM-элементы в блок .map__pins. Используйте DocumentFragment.
-    // for (var i = 0; i < window.data.offers.length; i++) {
-    //   var pinNode = window.pin.createPinNode(window.data.offers[i]);
-    //   pinFragment.appendChild(pinNode);
-    // }
-    // mapPins.appendChild(pinFragment);
-    window.backend.load(function (pins) {
-      // Создаем фрагмент, добавляем в него пины
-      var pinsFragment = document.createDocumentFragment();
-      for (var i = 0; i < pins.length; i++) {
-        var pinNode = window.pin.createPinNode(pins[i]);
-        pinsFragment.appendChild(pinNode);
-      }
-      var pinsPlace = document.querySelector('.map__pins');
-      pinsPlace.appendChild(pinsFragment);
-    }, window.form.onError);
-    map.classList.remove('map--faded'); // снять блок с карты
-    adForm.classList.remove('ad-form--disabled'); // снять блок с полей формы
+    window.backend.load(window.onSuccess, window.form.onError); // отрисовываем 5 пинов при активации
+    map.classList.remove('map--faded');
+    adForm.classList.remove('ad-form--disabled');
     getCoordinates();
     window.form.fieldsets.forEach(function (item) {
       item.disabled = false;
     });
+    filterForm.addEventListener('change', window.utils.debounce(window.filter.updatePins));
     mainPin.removeEventListener('click', mainPinClick);
     mainPin.removeEventListener('mousedown', mainPinClick);
     mainPin.removeEventListener('keydown', mainPinClick);
@@ -144,7 +128,6 @@
   });
 
   window.map = {
-    // createCoords: createCoords,
     mainPinClick: mainPinClick,
     map: map,
     getCoordinates: getCoordinates,

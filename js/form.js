@@ -13,16 +13,28 @@
   var fieldsets = adForm.querySelectorAll('fieldset');
   var mainPin = map.querySelector('.map__pin--main');
   var successPopup = document.querySelector('.success');
+  var filters = document.querySelector('.map__filters');
+  var capacityOptions = Array.from(capacityField.options);
+  var roomsCapacity = {
+    '1': ['1'],
+    '2': ['1', '2'],
+    '3': ['1', '2', '3'],
+    '100': ['0']
+  };
 
   var priceType = {
-    'bungalo': 0,
-    'flat': 1000,
-    'house': 5000,
-    'palace': 100000
+    bungalo: 0,
+    flat: 1000,
+    house: 5000,
+    palace: 100000
   };
+  onHouseTypeChange();
+  checkRoomGuests();
+
+
   function onHouseTypeChange() {
     priceField.min = priceType[accommodationType.value];
-    priceField.placeholder = priceField.min;
+    priceField.placeholder = priceType[accommodationType.value];
   }
 
   accommodationType.addEventListener('change', onHouseTypeChange);
@@ -37,25 +49,26 @@
     timeOutField.value = timeInField.value;
   }
 
-
   function checkRoomGuests() {
-    if ((roomNumberField.value === '1') && (capacityField.value !== '1')) {
-      capacityField.setCustomValidity('Одноместный номер рассчитан только на одного гостя');
-    } else if ((roomNumberField.value === '2') && (capacityField.value !== '2' && capacityField.value !== '1')) {
-      capacityField.setCustomValidity('В двух комнатах может проживать не более 2 гостей.');
-    } else if ((roomNumberField.value === '3') && (capacityField.value !== '2') && (capacityField.value !== '1') && (capacityField.value !== '3')) {
-      capacityField.setCustomValidity('В трех  комнатах может проживать не более 3 гостей');
-    } else if ((roomNumberField.value === '100') && (capacityField.value !== '0')) {
-      capacityField.setCustomValidity('не для гостей');
-    } else {
-      capacityField.setCustomValidity('');
-    }
+    var room = roomNumberField.options[roomNumberField.selectedIndex].value;
+    var selectedValues = roomsCapacity[room];
+    capacityOptions.forEach(function (option) {
+      if (selectedValues.includes(option.value)) {
+        option.disabled = false;
+        option.selected = true;
+      } else {
+        option.selected = false;
+        option.disabled = true;
+      }
+    });
   }
 
+  var onRoomFieldsetChange = function () {
+    checkRoomGuests();
+  };
 
   accommodationType.addEventListener('change', onHouseTypeChange);
-  capacityField.addEventListener('change', checkRoomGuests);
-  roomNumberField.addEventListener('change', checkRoomGuests);
+  roomNumberField.addEventListener('change', onRoomFieldsetChange);
   timeInField.addEventListener('change', syncTimeIn);
   timeOutField.addEventListener('change', syncTimeOut);
 
@@ -63,6 +76,8 @@
     window.card.closeCards();
     window.pin.removePins();
     adForm.reset();
+    filters.reset();
+    checkRoomGuests();
     mainPin.style.left = window.map.mapCenterX - (mainPin.offsetWidth / 2) + 'px'; // сместила главный пин
     mainPin.style.top = window.map.mapCenterY - (mainPin.offsetHeight / 2) + 'px';
     window.map.getCoordinates();
@@ -122,12 +137,9 @@
   // закрыть сообщение об успешной отправке
   function closePopup() {
     successPopup.classList.add('hidden');
-    // document.removeEventListener('click', closePopup());
     document.removeEventListener('keydown', onPopupEscPress);
   }
   successPopup.addEventListener('click', closePopup);
-
-  // Доработайте обработчик отправки формы так, чтобы он отменял действие формы по умолчанию и отправлял данные формы
 
 
   function onError(errorMessage) {
@@ -142,9 +154,8 @@
     errorMessageElement.classList.add('hidden');
   }
 
-  // Доработайте обработчик отправки формы так, чтобы он отменял действие формы по умолчанию и отправлял данные формы
   adForm.addEventListener('submit', function (evt) {
-    window.backend.upload(new FormData(adForm), onSuccessClick, onError);
+    window.backend.save(new FormData(adForm), onSuccessClick, onError);
     evt.preventDefault();
   });
 
@@ -153,7 +164,7 @@
     fieldsets: fieldsets,
     onPopupEnterPress: onPopupEnterPress,
     resetPage: resetPage,
-    onError: onError
-
+    onError: onError,
+    checkRoomGuests: checkRoomGuests
   };
 })();
