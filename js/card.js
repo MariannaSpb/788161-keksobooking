@@ -3,15 +3,14 @@
 (function () {
 
   var houseType = {
-    'palace': 'Дворец',
-    'flat': 'Квартира',
-    'house': 'Дом',
-    'bungalo': 'Бунгало',
+    palace: 'Дворец',
+    flat: 'Квартира',
+    house: 'Дом',
+    bungalo: 'Бунгало',
   };
   function getHouseType(type) {
     return houseType[type];
   }
-
 
   var mapCardTemplate = document.querySelector('template').content.querySelector('.map__card');
 
@@ -43,14 +42,14 @@
 
   // Закрытие попапа по нажатию на esc
   function onPopupEscapePress(evt) {
-    var mapCardElement = window.map.map.querySelector('.map__card'); // function (evt)
+    var mapCardElement = document.querySelector('.map__card');
     if (evt.keyCode === 27) {
       mapCardElement.remove();
     }
   }
 
   function closeCards() {
-    var cardsList = window.map.map.querySelectorAll('.map__card');
+    var cardsList = document.querySelectorAll('.map__card');
     if (cardsList) {
       for (var l = 0; l < cardsList.length; l++) {
         cardsList[l].classList.add('hidden');
@@ -58,13 +57,10 @@
     }
   }
 
-
   window.card = {
     renderMapCard: renderMapCard,
     closeCards: closeCards,
     getHouseType: getHouseType
-
-
   };
 
 })();
