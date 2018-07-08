@@ -3,7 +3,7 @@
 
   window.onSuccess = function (data) {
     pins = data;
-    window.render(pins);
+    window.pin.renderPins(pins);
   };
 
   var Price = {
@@ -16,19 +16,15 @@
   var filterPrice = filterForm.querySelector('#housing-price');
   var filterRooms = filterForm.querySelector('#housing-rooms');
   var filterGuests = filterForm.querySelector('#housing-guests');
-  // var filterFeatures = filterForm.querySelector('#housing-features');
-  // var filterCheckboxes = filterFeatures.querySelectorAll('.map__checkbox'); // для получения инфы о длинне массива удобств
+  var filterFeatures = filterForm.querySelector('#housing-features');
   var pins = [];
 
-  // ФИЛЬТРЫ КОТОРЫЕ НУЖНЫ - жилье\ ценв\комны\кол-во людей\удобства
-
-  // сортировка по типу жилья
 
   function onHouseTypeFilter(item) {
     return filterType.value === 'any' || item.offer.type === filterType.value;
   }
 
-  // сортировка по разбросу цен
+  // сортировка по стоимости
 
   function onPricefilter(item) {
     switch (filterPrice.value) {
@@ -53,8 +49,15 @@
     return filterGuests.value === 'any' || item.offer.guests.toString() === filterGuests.value;
   }
 
-
-  // фильтруем имеющиеся данные  (БЕЗ ФИЧЕЙ)
+  var featuresFilter = function (newData) {
+    var checkedElements = filterFeatures.querySelectorAll('input[type=checkbox]:checked');
+    var selectedFeatures = [].map.call(checkedElements, function (item) {
+      return item.value;
+    });
+    return selectedFeatures.every(function (currentFeature) {
+      return newData.offer.features.includes(currentFeature);
+    });
+  };
 
   function updatePins() {
     window.pin.removePins();
@@ -62,15 +65,18 @@
     .filter(onRoomsFilter)
     .filter(onGuestFilter)
     .filter(onPricefilter)
-    .filter(onHouseTypeFilter);
-    window.render(filteredPins);
+    .filter(onHouseTypeFilter)
+    .filter(featuresFilter);
+    window.pin.renderPins(filteredPins);
   }
 
-  filterForm.addEventListener('change', function () {
-    updatePins();
-  });
+  function onFiltersChange() {
+    window.utils.debounce(updatePins, window.DEBOUNCE_INTERVAL);
+  }
+  filterForm.addEventListener('change', onFiltersChange);
+
   window.filter = {
-    updatePins: updatePins
+    updatePins: updatePins,
   };
 
 })();
