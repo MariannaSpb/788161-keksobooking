@@ -5,10 +5,8 @@
   var MAX_POSITION_Y = 630;
   var MIN_POSITION_Y = 130;
   var ENTER_KEYCODE = 13;
-  var pinMainSize = 62;
-  var pinMainArrow = 22;
-  var pinMainHalfSize = pinMainSize / 2;
-  var pinMainAll = pinMainSize + pinMainArrow;
+  var MAIN_PIN_SIZE = 62;
+  var MAIN_PIN_ARROW = 22;
   var map = document.querySelector('.map');
   var mainPin = map.querySelector('.map__pin--main');
   var mapPins = map.querySelector('.map__pins');
@@ -17,57 +15,51 @@
   var inputAddress = adForm.querySelector('#address');
   var mapCenterX = map.offsetWidth / 2; // определила центр
   var mapCenterY = map.offsetHeight / 2;
+  var dragLimit = {
+    x: {
+      min: 0,
+      max: map.clientWidth - MAIN_PIN_SIZE
+    },
+    y: {
+      min: MIN_POSITION_Y - (MAIN_PIN_SIZE + MAIN_PIN_ARROW),
+      max: MAX_POSITION_Y - (MAIN_PIN_SIZE + MAIN_PIN_ARROW)
+    }
+  };
 
 
   mainPin.style.left = mapCenterX - (mainPin.offsetWidth / 2) + 'px'; // сместила главный пин
   mainPin.style.top = mapCenterY - (mainPin.offsetHeight / 2) + 'px';
 
-  mainPin.addEventListener('mousedown', mainPinClick); // активация страницы
-  mainPin.addEventListener('keydown', function (evt) { // активация страницы
+  mainPin.addEventListener('mousedown', onMainPinClick); // активация страницы
+  mainPin.addEventListener('keydown', onKeyboardActivatePin);
+
+  function onKeyboardActivatePin(evt) {
     if (evt.keyCode === ENTER_KEYCODE) {
-      mainPinClick();
+      onMainPinClick();
     }
-  });
+  }
 
 
   // определение координат главного пина
-  function getCoordinates() {
-    inputAddress.value = parseInt(mainPin.style.left + pinMainHalfSize, 10) + ', ' + parseInt(mainPin.style.top + pinMainAll, 10);
+  function calcCoordsToInputAdress() {
+    inputAddress.value = parseInt(mainPin.style.left + MAIN_PIN_SIZE / 2, 10) + ', ' + parseInt(mainPin.style.top + (MAIN_PIN_SIZE + MAIN_PIN_ARROW), 10);
   }
 
   // активация странички
-  function mainPinClick() {
+  function onMainPinClick() {
     window.backend.load(window.onSuccess, window.form.onError); // отрисовываем 5 пинов при активации
     map.classList.remove('map--faded');
     adForm.classList.remove('ad-form--disabled');
-    getCoordinates();
+    calcCoordsToInputAdress();
     window.form.fieldsets.forEach(function (item) {
       item.disabled = false;
     });
     filterForm.addEventListener('change', window.utils.debounce(window.filter.updatePins));
-    mainPin.removeEventListener('click', mainPinClick);
-    mainPin.removeEventListener('mousedown', mainPinClick);
-    mainPin.removeEventListener('keydown', mainPinClick);
-    mainPin.removeEventListener('mouseup', mainPinClick);
-    mainPin.removeEventListener('keydown', window.form.onPopupEnterPress);
-
+    mainPin.removeEventListener('mousedown', onMainPinClick);
+    mainPin.removeEventListener('keydown', onKeyboardActivatePin);
   }
 
-  var mainPinHandler = map.querySelector('.map__pin--main');
-
-  var dragLimit = {
-    x: {
-      min: 0,
-      max: map.clientWidth - pinMainSize
-    },
-    y: {
-      min: MIN_POSITION_Y - pinMainAll,
-      max: MAX_POSITION_Y - pinMainAll
-    }
-  };
-
-  mainPinHandler.addEventListener('mousedown', function (evt) {
-
+  mainPin.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
 
     // запомним координаты начальные
@@ -105,8 +97,8 @@
         top = dragLimit.y.min;
       }
 
-      var newCoordsX = left + pinMainHalfSize;
-      var newCoordsY = top + pinMainAll;
+      var newCoordsX = left + MAIN_PIN_SIZE / 2;
+      var newCoordsY = top + (MAIN_PIN_SIZE + MAIN_PIN_ARROW);
 
       mainPin.style.top = top + 'px';
       mainPin.style.left = left + 'px';
@@ -116,7 +108,6 @@
 
     var onMouseUp = function (upEvt) {
       upEvt.preventDefault();
-
 
       mapPins.removeEventListener('mousemove', onMouseMove);
       mapPins.removeEventListener('mouseup', onMouseUp);
@@ -128,12 +119,11 @@
   });
 
   window.map = {
-    mainPinClick: mainPinClick,
-    map: map,
-    getCoordinates: getCoordinates,
+    onMainPinClick: onMainPinClick,
+    calcCoordsToInputAdress: calcCoordsToInputAdress,
     mapCenterX: mapCenterX,
     mapCenterY: mapCenterY,
-
+    onKeyboardActivatePin: onKeyboardActivatePin,
   };
 
 })();
