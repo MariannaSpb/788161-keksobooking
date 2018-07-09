@@ -1,6 +1,7 @@
 'use strict';
 
 (function () {
+  var MESSAGE_TIMEOUT = 5000;
   var map = document.querySelector('.map');
   var adForm = document.querySelector('.ad-form');
   var timeInField = adForm.querySelector('#timein');
@@ -22,7 +23,7 @@
     '100': ['0']
   };
 
-  var priceType = {
+  var PriceType = {
     bungalo: 0,
     flat: 1000,
     house: 5000,
@@ -33,8 +34,8 @@
 
 
   function onHouseTypeChange() {
-    priceField.min = priceType[accommodationType.value];
-    priceField.placeholder = priceType[accommodationType.value];
+    priceField.min = PriceType[accommodationType.value];
+    priceField.placeholder = PriceType[accommodationType.value];
   }
 
   accommodationType.addEventListener('change', onHouseTypeChange);
@@ -63,41 +64,37 @@
     });
   }
 
-  var onRoomFieldsetChange = function () {
+  function onRoomFieldsetChange() {
     checkRoomGuests();
-  };
+  }
 
   accommodationType.addEventListener('change', onHouseTypeChange);
   roomNumberField.addEventListener('change', onRoomFieldsetChange);
   timeInField.addEventListener('change', syncTimeIn);
   timeOutField.addEventListener('change', syncTimeOut);
 
+
   function resetPage() {
     window.card.closeCards();
     window.pin.removePins();
     adForm.reset();
     filters.reset();
-    checkRoomGuests();
+    onRoomFieldsetChange();
+    onHouseTypeChange();
     mainPin.style.left = window.map.mapCenterX - (mainPin.offsetWidth / 2) + 'px'; // сместила главный пин
     mainPin.style.top = window.map.mapCenterY - (mainPin.offsetHeight / 2) + 'px';
-    window.map.getCoordinates();
+    window.map.calcCoordsToInputAdress();
     map.classList.add('map--faded');
     fieldsets.forEach(function (item) {
       item.disabled = true;
     });
     adForm.classList.add('ad-form--disabled');
-    mainPin.addEventListener('mouseup', window.map.mainPinClick); // активация страницы
-    mainPin.addEventListener('keydown', onPopupEnterPress);
+    mainPin.addEventListener('mouseup', window.map.onMainPinClick); // активация страницы
+    mainPin.addEventListener('keydown', window.map.onKeyboardActivatePin);
   }
 
   resetButton.addEventListener('click', resetPage);
-
-  // функция нажатия на гл пин enterom
-  function onPopupEnterPress(evt) {
-    if (evt.keyCode === window.utils.ENTER_KEYCODE) {
-      window.map.mainPinClick();
-    }
-  }
+  mainPin.removeEventListener('click', window.map.onMainPinClick);
 
   function onPopupEscPress(evt) {
     if (evt.keyCode === window.utils.ESC_KEYCODE) {
@@ -141,17 +138,15 @@
   }
   successPopup.addEventListener('click', closePopup);
 
-
-  function onError(errorMessage) {
-    var errorMessageElement = document.createElement('div');
-    errorMessageElement.style = 'z-index: 100; margin: 5px auto; text-align: center; background-color: red';
-    errorMessageElement.style.position = 'absolute';
-    errorMessageElement.style.left = 0;
-    errorMessageElement.style.right = 0;
-    errorMessageElement.style.fontSize = '30px';
-    errorMessageElement.textContent = errorMessage;
-    document.body.insertAdjacentElement('afterbegin', errorMessageElement); // добавляем ноду в DOM
-    errorMessageElement.classList.add('hidden');
+  function onError(response) {
+    var errorMassage = document.createElement('div');
+    errorMassage.style = 'margin: 0 auto; text-align: center; color: red;';
+    errorMassage.style.fontSize = '16px';
+    errorMassage.textContent = response + '. Попробуйте отправить форму еще раз.';
+    adForm.insertAdjacentElement('beforeend', errorMassage);
+    setTimeout(function () {
+      errorMassage.parentNode.removeChild(errorMassage);
+    }, MESSAGE_TIMEOUT);
   }
 
   adForm.addEventListener('submit', function (evt) {
@@ -162,7 +157,6 @@
 
   window.form = {
     fieldsets: fieldsets,
-    onPopupEnterPress: onPopupEnterPress,
     resetPage: resetPage,
     onError: onError,
     checkRoomGuests: checkRoomGuests
