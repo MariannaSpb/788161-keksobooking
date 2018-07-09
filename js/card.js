@@ -2,14 +2,14 @@
 
 (function () {
 
-  var houseType = {
+  var HouseType = {
     palace: 'Дворец',
     flat: 'Квартира',
     house: 'Дом',
     bungalo: 'Бунгало',
   };
   function getHouseType(type) {
-    return houseType[type];
+    return HouseType[type];
   }
 
   var mapCardTemplate = document.querySelector('template').content.querySelector('.map__card');
