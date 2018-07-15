@@ -46,9 +46,26 @@
       var photoBox = document.createElement('div');
       photoBox.classList.add('ad-form__photo');
       photoContainer.appendChild(photoBox);
-
-      addPhoto(fileHouseChooser, img);
-
     }
+
+    addPhoto(fileHouseChooser, img);
   });
+
+
+      // функция удаления картинки
+  function removeImg() {
+    var avatarImg = document.querySelector('.ad-form-header__preview img');
+    avatarImg.src = 'img/muffin-grey.svg';
+    var housesPhoto = document.querySelectorAll('.ad-form__photo:not(:last-child)');
+    if (housesPhoto.length) {
+      housesPhoto.forEach(function (item) {
+        item.remove();
+      });
+    }
+  }
+
+  window.pictures = {
+    removeImg: removeImg,
+
+  };
 })();
