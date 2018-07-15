@@ -15,6 +15,7 @@
   var mainPin = map.querySelector('.map__pin--main');
   var successPopup = document.querySelector('.success');
   var filters = document.querySelector('.map__filters');
+ // var photoContainer = document.querySelector('.ad-form__photo-container');
   var capacityOptions = Array.from(capacityField.options);
   var roomsCapacity = {
     '1': ['1'],
@@ -85,6 +86,7 @@
     mainPin.style.top = window.map.mapCenterY - (mainPin.offsetHeight / 2) + 'px';
     window.map.calcCoordsToInputAdress();
     map.classList.add('map--faded');
+    window.pictures.removeImg();
     fieldsets.forEach(function (item) {
       item.disabled = true;
     });
@@ -151,6 +153,7 @@
 
   adForm.addEventListener('submit', function (evt) {
     window.backend.save(new FormData(adForm), onSuccessClick, onError);
+    window.pictures.removeImg();
     evt.preventDefault();
   });
 
