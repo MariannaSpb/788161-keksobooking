@@ -35,6 +35,8 @@
     addPhoto(avatarChooser, avatarPreview);
   });
 
+  //...........................................................................
+
   // вставляем картинку
   // fileHouseChooser.addEventListener('change', function () {
   //   if (fileHouseChooser.files) {
@@ -53,10 +55,10 @@
 
   //   addPhoto(fileHouseChooser, img);
   // });
+ //...........................................................................
 
 
-
-  function createPhotoPreview() {
+  function createPhotoPreview() {  // TRUE
     var img = document.createElement('img');
       img.style.width = PHOTO_WIDTH;
       img.style.height = PHOTO_HEIGHT;
@@ -68,10 +70,11 @@
       photoContainer.appendChild(photoBox);
       addPhoto(fileHouseChooser, img); // не могу сделать драг тк эта функция тут- надо разделить
   }
+  var defaultAvatar = avatarPreview.src;
 
 
 
-
+  //------какое то говно------
   //     var img = document.createElement('img');
   //     // var container = photoPreview.cloneNode(true);
   //     //container.classList.remove('visually-hidden');
@@ -90,13 +93,22 @@
   //      //container.appendChild(img);
   //    };
 
+
+
+
+
   //    // вставляем картинку
    fileHouseChooser.addEventListener('change', createPhotoPreview); // переделать
+
+  // fileHouseChooser.addEventListener('change', function() {
+  //   addPhoto(fileHouseChooser, createPhotoPreview);
+  // });
 
    // функция удаления картинки
    function removeImg() {
     var avatarImg = document.querySelector('.ad-form-header__preview img');
-    avatarImg.src = 'img/muffin-grey.svg';
+    //avatarImg.src = 'img/muffin-grey.svg';
+    avatarImg.src = defaultAvatar;
     var housesPhoto = document.querySelectorAll('.ad-form__photo:not(:last-child)');
     //var housesPhoto = document.querySelectorAll('.ad-form__photo');
     if (housesPhoto.length) {
@@ -112,16 +124,16 @@
  var dropbox;
  // var dragged;
  var dropbox = document.querySelector('.ad-form__drop-zone'); //ссылка на область, куда предстоит тащить файл.
- ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+ ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(function (eventName) {
   dropbox.addEventListener(eventName, preventDefaults, false)
-})
+});
 function preventDefaults (evt) {
   evt.preventDefault()
   evt.stopPropagation()
 }
 
-dropbox.addEventListener('drop', function (event) {
-  addPhoto(event.dataTransfer, createPhotoPreview);
+dropbox.addEventListener('drop', function (evt) {
+  addPhoto(evt.dataTransfer, createPhotoPreview);
 });
 
  //что делать, когда файлы будут перетащены:
